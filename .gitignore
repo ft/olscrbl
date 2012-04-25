@@ -1,0 +1,12 @@
+.*
+!.gitignore
+*~
+\#*
+*.t2t
+*.1
+*.go
+tags
+TAGS
+bin/
+bin/*
+olscrbl/build-configuration.scm

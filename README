@@ -1,0 +1,27 @@
+olscrbl - command line offline scrobbling client
+
+How to build the application?
+
+  Make sure GNU guile is installed (preferably guile 2.0 or better) and call:
+
+    % make all
+
+  To generate the manual page, make sure txt2tags is installed and call:
+
+    % make doc
+
+  That's all.
+
+But I want XDG paths for my configuration...
+
+  With with above calls, add XDG="#t", like this:
+
+    % make all doc XDG="#t"
+
+  To make sure everything was rebuild, in case you built without XDG support
+  before, do:
+
+    % make clean
+
+For more information, see the manual page.
+For copyright and licencing information see the `LICENCE' file.

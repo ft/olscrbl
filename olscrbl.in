@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# This calls the boot code for `olscrbl'. The nice thing about this is that we
+# don't have to fiddle around with the right `guile' path in the shebang line.
+
+# Looks odd, huh? What the `@' does is this: Take a module-spec and a symbol
+# name and return the value behind the symbol. So what this does is: Get the
+# `boot' function from "(olscrbl boot)" and apply it to the arguments as
+# returned by `program-arguments'.
+BOOTCODE="((@ (olscrbl boot) boot) (program-arguments))"
+
+# Make the guile interpreter adjustable for people, who have installed multiple
+# versions of the software installed.
+OLSCRBL_GUILE_BINARY=${OLSCRBL_GUILE_BINARY:-guile}
+export OLSCRBL_GUILE_BINARY
+
+# If this variable is set to `t', olscrbl will not tell which init file it is
+# loading.
+OLSCRBL_LOAD_QUIET=${OLSCRBL_LOAD_QUIET:-f}
+export OLSCRBL_LOAD_QUIET
+
+# Load a shell-code file. Which can be used to make amendments to the execution
+# environment, like changing `OLSCRBL_GUILE_BINARY', `GUILE_AUTO_COMPILE',
+# `GUILE_LOAD_PATH', `GUILE_LOAD_COMPILED_PATH', `GUILE_WARN_DEPRECATED' or
+# `OLSCRBL_GUILE_FLAGS'. Or something entirely different.
+if test "@@use-xdg-paths@@" = '#t'; then
+    SHELLINIT="${XDG_CONFIG_HOME:-${HOME}/.config}/olscrbl/init.sh"
+else
+    SHELLINIT="${HOME}/.olscrbl/init.sh"
+fi
+test -f "${SHELLINIT}" && . "${SHELLINIT}"
+
+# Fire up guile (replace the shell process with it) and boot the program.
+exec "${OLSCRBL_GUILE_BINARY}" $OLSCRBL_GUILE_FLAGS -c "${BOOTCODE}" "$0" "$@"

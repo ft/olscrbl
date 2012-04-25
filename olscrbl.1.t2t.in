@@ -1,0 +1,401 @@
+OLSCRBL
+
+Dec, 2011
+
+%!target: man
+
+= NAME =
+
+olscrbl - offline scrobble
+
+
+= SYNOPSIS =
+
+//olscrbl// [**OPTION(s)**] [**FILE(s)**]
+
+
+= DESCRIPTION =
+
+The audioscrobbler system is a database to track music listening habits. Two
+well-known sites that feature this service are **http://last.fm** and
+**http://libre.fm** - the latter being a service run by free software entirely.
+
+`//olscrbl//' is a client to submit tracks to these services. The main use is
+to submit tracks to such a database, that were listened to on a mobile device,
+such an mp3-player, since some players support logging the tracks which were
+listened to, to a file for later submission. For example the open-source
+firmware from **http://rockbox.org** has support for that kind of logging.
+
+`//olscrbl//' can automatically submit tracks from such a log file to one or
+more databases. The user may supply filters that control which tracks are
+supposed to be submitted to which account. These filters are implemented in
+scheme.
+
+Normal operation is to take one or more files from the command line, which will
+then be read and the contents will be submitted as outlined above. If no file
+name is given, data is read from standard input. This is called "batch
+submission mode".
+
+There is a set of options, that turns the application into "single track
+submission mode" (see **Changing mode of operation** below), to send submit a
+single track to the configured databases directly from the command line. This
+mode of operation is fairly straight forward: You specify a track and the
+program submits it to all configured accounts (unless accounts were manually
+specified using `**--accounts**').
+
+"Batch submission mode" is a little more complex and is described in
+**BATCH SUBMISSION MODE** below.
+
+
+= OPTIONS =
+
+: **--help**, **-h**
+
+Print a brief help message.
+
+: **--version**, **-v**
+
+Print version information.
+
+: **--filetype**, **-f**
+
+In automatic-submission mode, defines the expected format of the input file.
+The default value (and currently only implemented format) is
+`//scrobbler-log//'. This option is provided to support user-supplied format
+implementations via the scheme configuration.
+
+: **--accounts**, **-r** (think: //r//emote)
+
+Takes a comma separated list of account names (all of which have to be defined
+in the configuration file) which will be activated for the current program
+invokation. This can be used to override the configured activated/deactivated
+properties of configured accounts.
+
+: **--query**, **-q**
+
+Takes an argument, reads the configuration file and then reports information
+concerning the given argument. Possible arguments: //accounts//.
+
+
+== Changing mode of operation ==
+
+If any of the following options is used, `//olscrbl//' switches into
+single-track submission mode. You **have** **to** supply `artist', `track' and
+`duration' and `timestamp' information as required by the audioscrobbler
+protocol.
+
+: **--album**, **-a**
+
+Name of the album of the track.
+
+: **--artist**, **-A** (//Required//)
+
+Name of the artist of the track.
+
+: **--duration**, **-d** (//Required//)
+
+Duration of the track to be submitted.
+
+: **--musicbrainz**, **-M**
+
+MusicBrainz-ID of the track to be submitted.
+
+: **--timestamp**, **-T** (//Required//)
+
+Unix timestamp in UTC timezone of the time when the track was played.
+
+: **--track**, **-t** (//Required//)
+
+Name of the track.
+
+: **--tracknumber**, **-n**
+
+Number of the track on the original medium (usually a compact disc or
+gramophone record).
+
+
+= FILES =
+
+During startup, `//olscrbl//' reads the following initialisation files:
+
+: **@@USERDIR@@/init.sh**
+
+A shell script, read very early which allows altering the execution environment
+of the actual program. This might be useful to change variables such as the
+ones listed in **ENVIRONMENT VARIABLES** below.
+
+: **@@USERDIR@@/init.scm**
+
+This is the real scheme configuration file, which defines accounts, filters and
+everything else about the program. See **SCHEME API** below.
+
+
+= BATCH SUBMISSION MODE =
+
+This section briefly describes how "batch submission mode" works, to give the
+user an overview and a better understanding about why `//olscrbl//' does things
+the way it does.
+
+
+== Input ==
+
+First of all, input can happen in exactly one of two ways: Either you specify
+one or more input files on the command line (all of which have to have the same
+file format) or `//olscrbl//' reads records from its standard input.
+
+
+== Output ==
+
+`//olscrbl//' does produce output files. All output file names are based on the
+respective input file names. When records are read from the standard input, the
+base name for the output files is taken from the `**stdin-output**' option.
+
+When an input file is processed, that input file is first renamed to
+"//<oldname>//.olscrbl". Processing then takes place. (The //<oldname>// part
+is refered to as `//<base>//' below.)
+
+The following output files are produced:
+
+: //<base>//
+
+All tracks that were processed by the `//keep//' target will be recorded here.
+
+: //<base>//.failed[**.<account>**]
+
+When submission of a track fails, its record is put into this file. The
+`**.account**' part is added only if more than one account is defined (or the
+`//output-always-account//' options is set).
+
+
+== Matching Tracks ==
+
+By using `**match-entry**', it can configured which tracks are submitted to
+which account. If no such matcher is defined, a default matcher is registered,
+which matches every track and causes them to be submitted to all defined
+accounts.
+
+You can //keep//, //drop// and //submit// tracks matched like this or cause
+user-defined actions to be taken (defined by `**add-action**').
+
+
+== Submission ==
+
+Each tag matched and marked for submission will be submitted to all defined and
+active accounts (unless the matcher defined a different account list or another
+account list was provided by the `**--accounts**' command line option).
+
+
+= SCHEME API =
+
+Access to the program's configuration is provided by the "(olscrbl config)"
+module, so every configuration file should begin like this:
+\
+``` (use-modules (olscrbl config))
+
+After that, the rest of the code has access to the API described herein.
+
+
+== Scheme Crash-Course ==
+
+Scheme is a dialect of Lisp. As such, it is composed of parenthesised
+expressions in prefix notation. That may sound scary, but is really is not.
+Prefix notation means, that a procedure (or function) is always the first part
+of an expression. And `parenthesised' means... well, it means that the
+expression is surrounded by parentheses. For example the following expression
+returns the result of the numeric computation "23 + 42", which is 65:
+\
+``` (+ 23 42)
+
+See? I said, the function is always the first thing in an expression. Even if
+that function is just an addition. Looks weird? Well, that notation does have
+its advantages. If you want to compute "1 + 2 + 3" you only have to use one
+`+': "(+ 1 2 3)". Other procedure calls might look more familiar:
+\
+``` (display "Hello World.\n")
+
+Yes. That's the good old hello-world standard example. Put that into your
+configuration file and `//olscrbl//' will print that message.
+
+Want to define a new variable?
+\
+``` (define new-thing 123)
+
+That will define a new variable called `new-thing' and set its initial value to
+`123'. Changing an existing variable is done using `set!':
+\
+``` (set! new-thing 234)
+
+After that, the value of `new-thing' will be `234'.
+
+To define a function, you also use define:
+\
+```
+(define (add-23 argument)
+  (+ argument 23))
+```
+
+Now there is a new function called `add-23', that takes one argument. When it
+is called, it takes that argument, adds 23 and returns the result.
+
+That is all you need to know (actually, it is already a bit more than is
+needed, strictly speaking) to configure `//olscrbl//'. The rest of this section
+describes all **procedures** and **macros**, that are available from the
+"(olscrbl config)" module. This is the only olscrbl-module, you should be using
+in your configuration, unless you know what you are doing.
+
+If you would like to know more about scheme, then there is a large number of
+books and online resources that describe all aspects of the language in great
+detail. One excellent book is mentioned in **SEE ALSO** at the and of this
+manual.
+
+
+== Procedures ==
+
+Procedures provide functionality to the user. For example, instead of having to
+assemble a matcher data-structure manually, you can use the **match-entry**
+procedure, which has a simple and clean API to make the task as simple as
+possible.
+
+Many of the procedures described herein use **keyword** syntax. That makes
+calling procedures with a lot of arguments much simpler and a lot more
+readable, because instead of having to remember in which order the arguments
+have to be supplied, you just **tell** the procedure what the next argument is
+supposed to be. Here is an example:
+\
+```
+(match-entry :artist "Slayer"
+             :album "South of Heaven"
+             :action 'submit)
+```
+
+Nevermind what that call actually does. What is important is, that this sets
+the `album' argument "South of Heaven" and the artist argument to "Slayer", no
+matter in what order you hand them over.
+
+
+: (**add-account** //:key0// value0 //:key1// value1 ...)
+
+: (**add-action** //:key0// value0 //:key1// value1 ...)
+
+: (**match-entry** //:key0// value0 //:key1// value1 ...)
+
+
+== Macros ==
+
+From a user's point of view, there is little difference between procedures and
+macros. For the sake of accuracy, we will keep them in a separate section
+anyway, though.
+
+: (**code** ...)
+
+This form returns a chunk of code, which may be used everywhere a chunk of code
+(or `thunk') may be used as a value. If you are familiar with scheme or lisp
+already, this is exactly the same as "(lambda () ...)". This macro was added
+for configuration file readability.
+
+: (**get-opt** //name//)
+
+Fetches the current value of the option named `//name//'. If the option name is
+not valid, the program will die (unless the `**quit**' exception is caught by
+the surrounding code).
+
+: (**set-opt** //name// //value//)
+
+Sets the option `//name//' to the value `//value//'. If the option name is
+invalid or the value is not valid for the option in question, the program will
+die (unless the `**quit**' exception is caught by the surrounding code).
+
+
+= CONFIGURATION FILE OPTIONS =
+
+The following options can be changed using the `//set-opt//' procedure and they
+are accessible via `//get-opt//'. Both procedures are described in
+**SCHEME API** above.
+
+: **unmatched-entries** (Symbol; default: //keep//)
+
+Decides what should be done with log entries that are left after all matchers
+have been run. Valid symbols are //keep// and //drop//.
+
+: **note-default-matcher** (Boolean; default: //#t//)
+
+If set to `//#t//' this will cause `//olscrbl//' to print a message if no
+matcher was specified in the configuration file and the default matcher is used
+(which matches ever track it encounters). Setting this to `//#f//' will disable
+that message.
+
+
+= ENVIRONMENT VARIABLES =
+
+: **OLSCRBL_GUILE_BINARY**
+
+Defines the path to the guile binary used by the program. Defaults to `guile'.
+
+: **OLSCRBL_LOAD_QUIET**
+
+Suppresses the "Loading cfg: ..." message when loading the scheme configuration
+file `//init.scm//'. Defaults to `f', which does not disable the message.
+
+: **OLSCRBL_GUILE_FLAGS**
+
+A list of flags supplied when calling the guile interpreter. Empty by default.
+
+: **GUILE_AUTO_COMPILE**
+: **GUILE_LOAD_PATH**
+: **GUILE_LOAD_COMPILED_PATH**
+: **GUILE_WARN_DEPRECATED**
+
+Consult the `guile' documentation about these.
+
+
+= EXAMPLES =
+
+This section lists a few examples on how `//olscrbl//' can be used. Example
+configuration files are briefly discussed in later sub-sections.
+
+To submit tracks from a file **"scrobbler.log"** according to the configuration
+file:
+\
+``` % olscrbl scrobbler.log
+
+
+== Shell Configuration ==
+
+The following content in `//init.sh//' will always suppress the "Loading ..."
+message, when `//olscrbl//' loads its scheme configuration file.
+\
+```
+OLSCRBL_LOAD_QUIET=t
+```
+
+
+== Scheme Configuration ==
+
+Finally, here is a minimal setup file, which allows the unconditional
+submission of tracks to the `last.fm' community service.
+\
+```
+(use-modules (olscrbl config))
+(set-opt note-default-matcher #f)
+(add-account :name 'last-fm
+             :user "username"
+             :password "password"
+             :uri "post.audioscrobbler.com"
+             :port 80)
+```
+
+
+= SEE ALSO =
+
+//guile//(1) and the //Guile Reference Manual//; the
+//Last.fm Submissions Protocol v1.2.1//:
+**<http://www.last.fm/api/submissions>**;
+Audioscrobbler //Portable Player Logging//:
+**<http://www.audioscrobbler.net/wiki/Portable_Player_Logging>**;
+//Structure and Interpretation of Computer Programs//.
+
+
+= COPYRIGHT =
+
+Copyright (c) 2011 Frank Terbeck <ft@bewatermyfriend.org>, All rights
+reserved. Terms for redistribution and use can be found in LICENCE.
