@@ -4,6 +4,8 @@
            matchers
            options
            get-opt-unsafe
+           get-account
+           get-accounts
            internal/get-option
            internal/initialise-options
            internal/set-option))
@@ -25,6 +27,12 @@
              code ...)
            (throw 'unknown-option))))))
 
+(define (keys hash)
+  (hash-fold (lambda (k v prior)
+               (cons k prior))
+             '()
+             hash))
+
 (define (internal/initialise-options)
   (hash-set! options 'log-file-type 'scrobbler-log)
   (hash-set! options 'unmatched-entries 'keep)
@@ -43,6 +51,12 @@
         (else
          (format #t "Missing verification fct for `~a'.\n" key)
          #f)))
+
+(define (get-accounts)
+  (keys accounts))
+
+(define (get-account a)
+  (hashq-ref accounts a))
 
 (define (internal/set-option key value)
   (with-option (key oldvalue)
