@@ -1,11 +1,11 @@
 (define-module (olscrbl scrobbler-log)
-  :use-module (ice-9 rdelim)
-  :use-module (olscrbl config)
-  :export (extract-data
-           parse-record
-           read-record
-           valid-data?
-           initialise-scrobbler-reader))
+  #:use-module (ice-9 rdelim)
+  #:use-module (olscrbl config)
+  #:export (extract-data
+            parse-record
+            read-record
+            valid-data?
+            initialise-scrobbler-reader))
 
 (define (read-record port)
   (read-line port 'trim))
@@ -32,8 +32,8 @@
           (else (list-ref dat (hash-ref datidx what))))))
 
 (define (initialise-scrobbler-reader)
-  (register-reader :type 'scrobbler-log
-                   :read-record read-record
-                   :parse-record parse-record
-                   :valid-data valid-data?
-                   :extract-data extract-data))
+  (register-reader #:type 'scrobbler-log
+                   #:read-record read-record
+                   #:parse-record parse-record
+                   #:valid-data valid-data?
+                   #:extract-data extract-data))
