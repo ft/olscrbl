@@ -8,9 +8,9 @@
   #:use-module (olscrbl main)
   #:export (boot))
 
-
 (define optspec '((version (single-char #\v))
                   (help (single-char #\h))
+                  (config (single-char #\c) (value #t))
                   (filetype (single-char #\f) (value #t))
                   (accounts (single-char #\r) (value #t))
                   (query (single-char #\q) (value #t))
@@ -59,38 +59,39 @@
         (begin (version)
                (quit 0)))
     ;; Load the user's init file.
-    (catch
-     #t
-     (lambda ()
-       ;; Thunk: Try to load the user's init file.
-       (if (file-exists? *init-file*)
-           (begin
-             (if (not load-quiet)
-                 (format #t "Loading cfg: `~a'...\n" *init-file*))
-             (load *init-file*))
-           (format #t "No configuration file found, at: `~a'\n"
-                   *init-file*)))
-     (lambda (key . args)
-       ;; Error-handler: Ask user if we should go on.
-       (let ((reason (symbol->string key)))
-         (format #t "\n  Caught exception (~a) while\n  reading `~a'.\n\n"
-                 (symbol->string key)
-                 *init-file*)
-         (format #t "~a\n\n" args)
-         (if (string= reason "quit")
-             (quit 1))
-         (format #t "Hit <ENTER> to continue or <CTRL-C> to abort.\n\n")
-         (let nc ((c #\a))
-           (if (eq? c #\newline)
-               #t
-               (nc (read-char (current-input-port)))))))
-     (lambda (key . args)
-       ;; Pre-unwind-handler: Dump backtrace.
-       (let ((reason (symbol->string key)))
-         (if (string= reason "quit")
-             (quit 1))
-         (display-backtrace (make-stack #t)
-                            (current-output-port))))))
+    (let ((file (option-ref options 'config *init-file*)))
+      (catch
+        #t
+        (lambda ()
+          ;; Thunk: Try to load the user's init file.
+          (if (file-exists? file)
+              (begin
+                (if (not load-quiet)
+                    (format #t "Loading cfg: `~a'...\n" file))
+                (primitive-load file))
+              (format #t "No configuration file found, at: `~a'\n"
+                      file)))
+        (lambda (key . args)
+          ;; Error-handler: Ask user if we should go on.
+          (let ((reason (symbol->string key)))
+            (format #t "\n  Caught exception (~a) while\n  reading `~a'.\n\n"
+                    (symbol->string key)
+                    file)
+            (format #t "~a\n\n" args)
+            (if (string= reason "quit")
+                (quit 1))
+            (format #t "Hit <ENTER> to continue or <CTRL-C> to abort.\n\n")
+            (let nc ((c #\a))
+              (if (eq? c #\newline)
+                  #t
+                  (nc (read-char (current-input-port)))))))
+        (lambda (key . args)
+          ;; Pre-unwind-handler: Dump backtrace.
+          (let ((reason (symbol->string key)))
+            (if (string= reason "quit")
+                (quit 1))
+            (display-backtrace (make-stack #t)
+                               (current-output-port)))))))
   (set-opt-if-option-set 'log-file-type options 'filetype string->symbol)
   ;; Initialisation done. Load the actual program.
   (olscrbl-main))
