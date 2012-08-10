@@ -7,6 +7,11 @@ package MockUpLastFM;
 use HTTP::Server::Simple::CGI;
 use base qw{ HTTP::Server::Simple::CGI };
 
+my %cnf = (
+    mode => q{},
+    bg => 0
+);
+
 my %dispatch = (
     '/' => \&response_handshake,
     '/np' => \&response_nowplaying,
@@ -39,7 +44,7 @@ sub handle_request {
 
     my $path = $cgi->path_info();
     my $handler = $dispatch{$path};
-    print STDERR "$path\n";
+    print STDERR "$path (" . $cnf{mode} . ")\n";
 
     if (ref $handler eq "CODE") {
         $handler->($cgi);
@@ -65,8 +70,51 @@ sub response_submit {
     }
 }
 
-sub response_nowplaying { response_submit(@_); }
+sub response_nowplaying {
+    response_submit(@_);
+}
 
 package main;
+
+do {
+    sub usage {
+        print q{
+ Usage: test-server [OPTION(s)]
+
+  --help, -h             Display this help text.
+  --background, -b       Put server into background.
+  --mode, -m <MODE>      Supply a mode parameter to the server.
+
+};
+
+    }
+    use Getopt::Long;
+    my ($rc);
+
+    Getopt::Long::Configure(
+        'require_order', 'no_gnu_compat', 'auto_abbrev',
+        'no_ignore_case', 'bundling');
+
+    $rc = GetOptions (
+        "help|h" =>
+            sub { usage; exit 0 },
+        "mode|m=s" =>
+            sub { $MockUpLastFM::cnf{mode} = $_[1] },
+        "background|b" =>
+            sub { $MockUpLastFM::cnf{bg} = 1 } );
+
+    if (!$rc) {
+        usage;
+        exit 1;
+    }
+};
+
 my $srv = MockUpLastFM->new(8080);
-my $pid = $srv->run();
+my $pid;
+
+if ($MockUpLastFM::cnf{bg}) {
+    $pid = $srv->background();
+    print "$pid\n";
+} else {
+    $pid = $srv->run();
+}
