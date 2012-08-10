@@ -1,21 +1,20 @@
 (define-module (olscrbl config)
-  :use-module (ice-9 pretty-print)
-  :export (;; functions
-           add-account
-           add-action
-           match-entry
-           register-reader
-           ;; macros
-           code
-           get-opt
-           set-opt))
-
-(use-modules (ice-9 format)
-             (ice-9 optargs)
-             (olscrbl config internal)
-             (olscrbl matchers)
-             (olscrbl reader)
-             (olscrbl utils))
+  #:use-module (ice-9 pretty-print)
+  #:use-module (ice-9 format)
+  #:use-module (ice-9 optargs)
+  #:use-module (olscrbl config internal)
+  #:use-module (olscrbl matchers)
+  #:use-module (olscrbl reader)
+  #:use-module (olscrbl utils)
+  #:export (;; functions
+            add-account
+            add-action
+            match-entry
+            register-reader
+            ;; macros
+            code
+            get-opt
+            set-opt))
 
 ;; Let's make use of `:foo' style keyword-read-syntax. `#:foo' still works, but
 ;; I think for former makes for better readability in user-configuration files.
@@ -140,7 +139,7 @@
              (if artist (set! new (cons (cons matcher/artist artist) new)))
              new))))))
 
-(define* (register-reader :key
+(define* (register-reader #:key
                           type
                           read-record
                           parse-record

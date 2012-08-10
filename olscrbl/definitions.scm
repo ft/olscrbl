@@ -1,14 +1,13 @@
 (define-module (olscrbl definitions)
-  :export (*home-directory*
-           *olscrbl-directory*
-           *init-file*
-           *guile-binary*
-           *program-args*
-           *program-args-non-options*
-           *program-name*
-           *program-version*))
-
-(use-modules (olscrbl build-configuration))
+  #:use-module (olscrbl build-configuration)
+  #:export (*home-directory*
+            *olscrbl-directory*
+            *init-file*
+            *guile-binary*
+            *program-args*
+            *program-args-non-options*
+            *program-name*
+            *program-version*))
 
 (define *guile-binary* "*init*")
 (define *program-args* '())

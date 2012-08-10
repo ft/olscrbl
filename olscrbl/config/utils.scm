@@ -2,14 +2,14 @@
 ;; helpful for dealing with the data structures filled *by* the configuration.
 
 (define-module (olscrbl config utils)
-  :use-module (olscrbl config)
-  :use-module (olscrbl config internal)
-  :export (cnt-accounts
-           cnt-actions
-           cnt-matchers
-           for-all-matchers
-           matcher-get-accounts
-           matcher-get-predicates))
+  #:use-module (olscrbl config)
+  #:use-module (olscrbl config internal)
+  #:export (cnt-accounts
+            cnt-actions
+            cnt-matchers
+            for-all-matchers
+            matcher-get-accounts
+            matcher-get-predicates))
 
 (define (matcher-get-accounts m)
   (car m))

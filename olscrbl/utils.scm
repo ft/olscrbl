@@ -1,10 +1,10 @@
 (define-module (olscrbl utils)
-  :export (die
-           open-utf8-file
-           timestamp))
+  #:use-module (ice-9 format)
+  #:use-module (srfi srfi-18)
+  #:export (die
+            open-utf8-file
+            timestamp))
 
-(use-modules (ice-9 format)
-             (srfi srfi-18))
 
 (define-syntax die
   (syntax-rules ()

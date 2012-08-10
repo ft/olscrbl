@@ -1,17 +1,16 @@
 (define-module (olscrbl config internal)
-  :export (accounts
-           actions
-           matchers
-           options
-           get-opt-unsafe
-           get-account
-           get-accounts
-           internal/get-option
-           internal/initialise-options
-           internal/set-option))
-
-(use-modules (ice-9 format))
-(use-modules (ice-9 pretty-print))
+  #:use-module (ice-9 format)
+  #:use-module (ice-9 pretty-print)
+  #:export (accounts
+            actions
+            matchers
+            options
+            get-opt-unsafe
+            get-account
+            get-accounts
+            internal/get-option
+            internal/initialise-options
+            internal/set-option))
 
 (define accounts (make-hash-table 8))
 (define actions (make-hash-table))

@@ -65,10 +65,9 @@
 
 ;; Guile compatibility BEGIN
 (define-module (olscrbl md5)
-  :export (md5))
-
-(use-modules (srfi srfi-11)
-             (rnrs arithmetic fixnums))
+  #:use-module (srfi srfi-11)
+  #:use-module (rnrs arithmetic fixnums)
+  #:export (md5))
 
 (define fxlogand fxand)
 (define fxlogior fxior)

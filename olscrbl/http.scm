@@ -1,13 +1,13 @@
 (define-module (olscrbl http)
-  :use-module (ice-9 format)
-  :use-module (ice-9 pretty-print)
-  :use-module (web client)
-  :use-module (web request)
-  :use-module (web response)
-  :use-module (web uri)
-  :use-module (srfi srfi-1)
-  :use-module (rnrs bytevectors)
-  :export (http-post))
+  #:use-module (ice-9 format)
+  #:use-module (ice-9 pretty-print)
+  #:use-module (web client)
+  #:use-module (web request)
+  #:use-module (web response)
+  #:use-module (web uri)
+  #:use-module (srfi srfi-1)
+  #:use-module (rnrs bytevectors)
+  #:export (http-post))
 
 ;; Meh. Guile has no POST method built-in, yet. So wip up something simple.
 

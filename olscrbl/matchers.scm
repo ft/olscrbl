@@ -1,11 +1,11 @@
 (define-module (olscrbl matchers)
-  :use-module (olscrbl config utils)
-  :use-module (olscrbl scrobbler-log)
-  :use-module (ice-9 pretty-print)
-  :export (run-matchers
-           matcher/album
-           matcher/artist
-           matcher/track))
+  #:use-module (olscrbl config utils)
+  #:use-module (olscrbl scrobbler-log)
+  #:use-module (ice-9 pretty-print)
+  #:export (run-matchers
+            matcher/album
+            matcher/artist
+            matcher/track))
 
 (define (matcher/album string)
   #t)

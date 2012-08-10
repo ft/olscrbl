@@ -1,6 +1,6 @@
 (define-module (olscrbl reader)
-  :export (reader-get-proc
-           reader-set-proc))
+  #:export (reader-get-proc
+            reader-set-proc))
 
 (define reader '())
 
