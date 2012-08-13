@@ -10,3 +10,5 @@ TAGS
 bin/
 bin/*
 olscrbl/build-configuration.scm
+t/twd
+t/twd/*
