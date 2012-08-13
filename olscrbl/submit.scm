@@ -75,7 +75,7 @@
              (cons (+ 1 num)
                    (string-append l
                                   (format #f
-                                          "&a[~d]=~a&t[~d]=~a&b[~d]=~a&l[~d]=~a&n[~d]=~a&i[~d]=~a&o[~d]=P&r[~d]=&m[~d]="
+"&a[~d]=~a&t[~d]=~a&b[~d]=~a&l[~d]=~a&n[~d]=~a&i[~d]=~a&o[~d]=P&r[~d]=&m[~d]="
                                           num
                                           (extract-data new 'artist)
                                           num
