@@ -56,17 +56,31 @@ sub handle_request {
 
 sub response_handshake {
     my ($cgi) = @_;
-    reply 200, [ "OK",
-                 "cafebabe",
-                 "http://localhost:8080/np",
-                 "http://localhost:8080/submit" ];
+    if ($cnf{mode} eq q{badauth}) {
+        reply 200, [ "BADAUTH" ];
+    } elsif ($cnf{mode} eq q{badtime}) {
+        reply 200, [ "BADTIME" ];
+    } elsif ($cnf{mode} eq q{banned}) {
+        reply 200, [ "BANNED" ];
+    } elsif ($cnf{mode} eq q{failed}) {
+        reply 200, [ "FAILED Go away!" ];
+    } else {
+        reply 200, [ "OK",
+                     "cafebabe",
+                     "http://localhost:8080/np",
+                     "http://localhost:8080/submit" ];
+    }
 }
 
 sub response_submit {
     my ($cgi) = @_;
-    reply 200, [ "OK" ];
-    foreach my $key ($cgi->param()) {
-        print STDERR "$key: {", $cgi->param($key), "}\n";
+    if ($cnf{mode} eq q{badsession}) {
+        reply 200, [ "BADSESSION" ];
+    } else {
+        reply 200, [ "OK" ];
+        foreach my $key ($cgi->param()) {
+            print STDERR "$key: {", $cgi->param($key), "}\n";
+        }
     }
 }
 
@@ -74,7 +88,19 @@ sub response_nowplaying {
     response_submit(@_);
 }
 
+sub set {
+    my ($self, $key, $val) = @_;
+    $cnf{$key} = $val;
+}
+
+sub get {
+    my ($self, $key) = @_;
+    return $cnf{$key};
+}
+
 package main;
+
+my $srv = MockUpLastFM->new(8080);
 
 do {
     sub usage {
@@ -99,9 +125,9 @@ do {
         "help|h" =>
             sub { usage; exit 0 },
         "mode|m=s" =>
-            sub { $MockUpLastFM::cnf{mode} = $_[1] },
+            sub { $srv->set('mode', $_[1]) },
         "background|b" =>
-            sub { $MockUpLastFM::cnf{bg} = 1 } );
+            sub { $srv->set('bg', 1) } );
 
     if (!$rc) {
         usage;
@@ -109,10 +135,9 @@ do {
     }
 };
 
-my $srv = MockUpLastFM->new(8080);
 my $pid;
 
-if ($MockUpLastFM::cnf{bg}) {
+if ($srv->get('bg')) {
     $pid = $srv->background();
     print "$pid\n";
 } else {
