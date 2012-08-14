@@ -116,14 +116,13 @@
                   (make-stream proc (filter (lambda (dat)
                                               (not (run-matchers account dat)))
                                             tracks))))
-            (format #t "-!- status: ~a~%" status)
-            (format #t "-!- session-id: ~a~%" session-id)
-            (format #t "-!- submit-uri-string: ~a~%" submit-uri-string)
+            (format #t " -!- status: ~a~%" status)
+            (format #t " -!- session-id: ~a~%" session-id)
+            (format #t " -!- submit-uri-string: ~a~%" submit-uri-string)
             (stream-for-each (lambda (chunk)
-                               (pretty-print
-                                (http-post
-                                 submit-uri-string
-                                 (list (generate-submissions session-id chunk)))))
+                               (http-post
+                                submit-uri-string
+                                (list (generate-submissions session-id chunk))))
                              track-stream))))))))
 
 ;; Generates a handshake URI for `account'.
