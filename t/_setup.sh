@@ -6,6 +6,11 @@ _test_call_program () {
     _TEST_RETURN=$?
 }
 
+if ! test -f logs/all.stamp; then
+    test -d logs && rm -Rf logs
+    mkdir -p logs
+fi
+
 rootdir=$(cd ..; pwd)
 program="$rootdir/bin/olscrbl"
 GUILE_LOAD_PATH=$rootdir

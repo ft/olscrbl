@@ -12,3 +12,5 @@ bin/*
 olscrbl/build-configuration.scm
 t/twd
 t/twd/*
+t/logs
+t/logs/*
