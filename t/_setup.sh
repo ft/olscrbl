@@ -1,5 +1,11 @@
 #!/bin/sh
 
+_test_call_program () {
+    sh "$program" "$@"  > client-stdout.log \
+                       2> client-stderr.log
+    _TEST_RETURN=$?
+}
+
 rootdir=$(cd ..; pwd)
 program="$rootdir/bin/olscrbl"
 GUILE_LOAD_PATH=$rootdir
