@@ -102,25 +102,29 @@
            (throw 'scrobble-http-handshake-non-200))
       (format #t " -!- body: ~s~%" b)
       (let* ((body (string-split b #\newline))
-             (status (car body))
-             (session-id (cadr body))
-             (submit-uri-string (cadddr body))
-             (a (get-account account))
-             (proc (make-submissions-stream-proc
-                    (hashq-ref a 'max-submissions)))
-             (track-stream
-              (make-stream proc (filter (lambda (dat)
-                                          (not (run-matchers account dat)))
-                                        tracks))))
-        (format #t "-!- status: ~a~%" status)
-        (format #t "-!- session-id: ~a~%" session-id)
-        (format #t "-!- submit-uri-string: ~a~%" submit-uri-string)
-        (stream-for-each (lambda (chunk)
-                           (pretty-print
-                            (http-post
-                             submit-uri-string
-                             (list (generate-submissions session-id chunk)))))
-                         track-stream)))))
+             (status (car body)))
+        (cond
+         ((not (string=? status "OK"))
+          (format #t "Handshake failed (~a).~%" status))
+         (else
+          (let* ((session-id (cadr body))
+                 (submit-uri-string (cadddr body))
+                 (a (get-account account))
+                 (proc (make-submissions-stream-proc
+                        (hashq-ref a 'max-submissions)))
+                 (track-stream
+                  (make-stream proc (filter (lambda (dat)
+                                              (not (run-matchers account dat)))
+                                            tracks))))
+            (format #t "-!- status: ~a~%" status)
+            (format #t "-!- session-id: ~a~%" session-id)
+            (format #t "-!- submit-uri-string: ~a~%" submit-uri-string)
+            (stream-for-each (lambda (chunk)
+                               (pretty-print
+                                (http-post
+                                 submit-uri-string
+                                 (list (generate-submissions session-id chunk)))))
+                             track-stream))))))))
 
 ;; Generates a handshake URI for `account'.
 (define (generate-scrobbling-handshake account)
