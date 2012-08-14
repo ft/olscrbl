@@ -88,8 +88,7 @@
                                           (extract-data new 'tracknumber)
                                           num
                                           (extract-data new 'timestamp)
-                                          num num num
-                                          )))))
+                                          num num num)))))
          `(0 . ,(format #f "s=~a&portable=1" session-id))
          tracks)))
 
