@@ -34,15 +34,15 @@
   (syntax-rules ()
     ((_ (iter) code ...)
      (catch 'matchers-done
-            (lambda ()
-              (let next-matcher ((remaining-matchers matchers))
-                (cond
-                 ((null? remaining-matchers) #t)
-                 (else
-                  (let ((iter (car remaining-matchers)))
-                    code ...)
-                  (next-matcher (cdr remaining-matchers))))))
-            (lambda (key . args) #f)))))
+       (lambda ()
+         (let next-matcher ((remaining-matchers matchers))
+           (cond
+            ((null? remaining-matchers) #t)
+            (else
+             (let ((iter (car remaining-matchers)))
+               code ...)
+             (next-matcher (cdr remaining-matchers))))))
+       (lambda (key . args) #f)))))
 
 (define (cnt-hash h)
   (hash-fold (lambda (k v p) (1+ p))

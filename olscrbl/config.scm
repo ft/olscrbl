@@ -43,10 +43,10 @@
   (syntax-rules ()
     ((_ (opt) code ...)
      (catch 'unknown-option
-            (lambda ()
-              code ...)
-            (lambda (key . args)
-              (die "Unknown option: ~s\n" (symbol->string (quote opt))))))))
+       (lambda ()
+         code ...)
+       (lambda (key . args)
+         (die "Unknown option: ~s\n" (symbol->string (quote opt))))))))
 
 (define-syntax get-opt
   (syntax-rules ()
@@ -59,11 +59,11 @@
     ((_ opt val)
      (with-unknown-option-catch (opt)
        (catch 'broken-value
-              (lambda ()
-                (internal/set-option (quote opt) val))
-              (lambda (key . args)
-                (die "Broken value for `~a': ~s\n"
-                     (quote opt) val)))))))
+         (lambda ()
+           (internal/set-option (quote opt) val))
+         (lambda (key . args)
+           (die "Broken value for `~a': ~s\n"
+                (quote opt) val)))))))
 
 (define valid-account-types '(as12))
 
