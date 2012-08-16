@@ -8,3 +8,9 @@
              'scheme-indent-function
              (cdr thing)))
       '((with-unknown-option-catch . defun)))
+
+(mapc (lambda (subdir)
+        (let ((file (concat subdir "/emacs-integration.el")))
+          (if (file-exists-p file)
+              (load-file file))))
+      '("scmtap"))
