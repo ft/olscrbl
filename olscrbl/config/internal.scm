@@ -39,7 +39,7 @@
 
 (define valid/unmatched-entries '(keep drop))
 
-(define (broken-value key value)
+(define (broken-value? key value)
   (cond ((eq? key 'unmatched-entries)
          (eq? (memq value valid/unmatched-entries)
               #f))
@@ -59,7 +59,7 @@
 
 (define (internal/set-option key value)
   (with-option (key oldvalue)
-    (if (broken-value key value)
+    (if (broken-value? key value)
         (throw 'broken-value))
     (hash-set! options key value)))
 
