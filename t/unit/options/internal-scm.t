@@ -1,6 +1,8 @@
 (use-modules (olscrbl config internal)
              (taptest))
 
+(primitive-load "taptest-config.scm")
+
 (with-fs-test-bundle
  (plan 1)
  (define-test "initialise default options"
