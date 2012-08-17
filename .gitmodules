@@ -1,0 +1,6 @@
+[submodule "scmtap"]
+	path = scmtap
+	url = /home/hawk/src/prj/scmtap/.git
+[submodule "test-dispatch"]
+	path = test-dispatch
+	url = /home/hawk/src/prj/test-dispatch/.git
