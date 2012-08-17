@@ -8,7 +8,7 @@ elif ! test -f test-dispatch/runtests; then
     exit 0
 fi
 
-VERBOSE=${VERBOSE:-0}
+VERBOSE=${VERBOSE:-1}
 
 if test $VERBOSE -ge 1; then
     RUNTESTS_PROVE_VERBOSE=1
