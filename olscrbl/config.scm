@@ -144,7 +144,8 @@
                           read-record
                           parse-record
                           valid-data
-                          extract-data)
+                          extract-data
+                          produce-record)
   (verify-type 'register-reader type (lambda (t)
                                        (and (not (eq? t #f))
                                             (symbol? t))))
@@ -152,7 +153,9 @@
   (verify-type 'register-reader parse-record procedure?)
   (verify-type 'register-reader valid-data procedure?)
   (verify-type 'register-reader extract-data procedure?)
+  (verify-type 'register-reader produce-record procedure?)
   (reader-set-proc type 'read-record read-record)
   (reader-set-proc type 'parse-record parse-record)
   (reader-set-proc type 'valid-data valid-data)
-  (reader-set-proc type 'extract-data extract-data))
+  (reader-set-proc type 'extract-data extract-data)
+  (reader-set-proc type 'produce-record produce-record))
