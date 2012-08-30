@@ -12,6 +12,7 @@
   #:use-module (olscrbl utils)
   #:use-module (olscrbl md5)
   #:use-module (olscrbl http)
+  #:use-module (olscrbl config utils)
   #:use-module (olscrbl config internal)
   #:export (submit/setup-reader
             submit-with-file

@@ -7,7 +7,7 @@
             options
             get-opt-unsafe
             get-account
-            get-accounts
+            keys
             internal/get-option
             internal/initialise-options
             internal/set-option))
@@ -51,12 +51,6 @@
          (format #t "Missing verification fct for `~a'.\n" key)
          #f)))
 
-(define (get-accounts)
-  (keys accounts))
-
-(define (get-account a)
-  (hashq-ref accounts a))
-
 (define (internal/set-option key value)
   (with-option (key oldvalue)
     (if (broken-value? key value)
@@ -69,3 +63,6 @@
 
 (define (get-opt-unsafe key)
   (hash-ref options key))
+
+(define (get-account a)
+  (hashq-ref accounts a))

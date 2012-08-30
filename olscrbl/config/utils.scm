@@ -8,6 +8,8 @@
             cnt-actions
             cnt-matchers
             for-all-matchers
+            get-accounts
+            get-actions
             matcher-get-accounts
             matcher-get-predicates))
 
@@ -44,15 +46,17 @@
              (next-matcher (cdr remaining-matchers))))))
        (lambda (key . args) #f)))))
 
-(define (cnt-hash h)
-  (hash-fold (lambda (k v p) (1+ p))
-             0 h))
-
 (define (cnt-accounts)
-  (cnt-hash accounts))
+  (length (get-accounts)))
+
+(define (get-accounts)
+  (keys accounts))
 
 (define (cnt-actions)
-  (cnt-hash actions))
+  (length (get-actions)))
+
+(define (get-actions)
+  (keys actions))
 
 (define (cnt-matchers)
   (length matchers))
