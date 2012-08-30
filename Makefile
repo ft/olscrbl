@@ -6,8 +6,10 @@ SED_XDG = s,@@use-xdg-paths@@,$(XDG),
 
 all: olscrbl/build-configuration.scm bin/olscrbl
 
-test: unit-tests
-	@printf '\n Running test-suite:\n'
+test: unit-tests functional-tests
+
+functional-tests:
+	@printf '\n Running functional test-suite:\n\n'
 	@cd t && sh all.sh
 	@printf '\n'
 
@@ -40,4 +42,4 @@ bin/olscrbl: olscrbl.in
 olscrbl.1.t2t: olscrbl.1.t2t.in
 	perl -npe 'if ("$(XDG)" eq "#t") { s,\@\@USERDIR\@\@,\$${XDG_CONFIG_HOME},g; } else { s,\@\@USERDIR\@\@,~/.olscrbl,g; }' < $< > $@
 
-.PHONY: all doc clean test happiness unit-tests
+.PHONY: all doc clean test happiness functional-tests unit-tests
