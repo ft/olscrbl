@@ -48,13 +48,12 @@
                      ;; Ignore invalid entries.
                      s)))))))))
 
-(define (account-active? x) #t)
-
 ;; Call `submit-tracks-for-account' for every active account.
 (define (submit-tracks tracks)
   (map (lambda (account)
          (submit-tracks-for-account account tracks))
-       (get-accounts)))
+       (filter account-active?
+               (get-accounts))))
 
 ;; Returns a function that can be used with `make-stream' to create a stream of
 ;; tracks. Streams like that return chunks of a larger list that are at most

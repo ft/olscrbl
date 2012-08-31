@@ -19,7 +19,8 @@
               :user "someone"
               :password "password"
               :uri "turtle.libre.fm"
-              :port 80)
+              :port 80
+              :active #f)
 
  (define-test "one account"
    (pass-if-= (cnt-accounts)
@@ -73,4 +74,14 @@
 
  (define-test "two matchers"
    (pass-if-= (cnt-matchers)
-              2)))
+              2))
+
+ (define-test "account-active? yes"
+   (pass-if-true (account-active? 'last-fm)))
+
+ (define-test "account-active? no"
+   (pass-if-false (account-active? 'libre-fm)))
+
+ (define-test "account-parameter"
+   (pass-if-= (account-parameter 'last-fm 'port)
+              80)))

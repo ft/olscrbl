@@ -59,7 +59,8 @@
                       (options '())
                       (port 80)
                       (max-submissions 50)
-                      (type 'as12))
+                      (type 'as12)
+                      (active #t))
   (verify-type 'add-account name symbol?)
   (verify-type 'add-account options list?)
   (verify-type 'add-account password string?)
@@ -68,6 +69,7 @@
   (verify-type 'add-account uri string?)
   (verify-type 'add-account max-submissions integer?)
   (verify-type 'add-account user string?)
+  (verify-type 'add-account active boolean?)
   (if (not (memq type valid-account-types))
       (die "\n -!- add-account: Invalid account type: `~a'.\n\n"
            (symbol->string type)))
@@ -78,7 +80,8 @@
     (hashq-set! new 'type type)
     (hashq-set! new 'uri uri)
     (hashq-set! new 'max-submissions max-submissions)
-    (hashq-set! new 'user user)))
+    (hashq-set! new 'user user)
+    (hashq-set! new 'active active)))
 
 (define valid-action-types '(rewrite))
 

@@ -3,6 +3,7 @@
   #:use-module (ice-9 pretty-print)
   #:export (accounts
             actions
+            extract-parameter
             matchers
             options
             get-opt-unsafe
@@ -68,6 +69,8 @@
 (define (get-account a)
   (hashq-ref accounts a))
 
+(define (extract-parameter data p)
+  (hashq-ref data p))
 
 (define-syntax verify-type
   (syntax-rules()

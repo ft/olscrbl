@@ -4,7 +4,7 @@
 (primitive-load "taptest-config.scm")
 
 (with-fs-test-bundle
- (plan 15)
+ (plan 16)
  (internal/initialise-options)
 
  (define-test "initialise default options"
@@ -51,4 +51,9 @@
                (#t log-file-type 123)
                (#f unmatched-entries keep)
                (#f unmatched-entries drop)
-               (#t unmatched-entries foo-bar-baz)))))
+               (#t unmatched-entries foo-bar-baz))))
+
+ (let ((a (make-hash-table)))
+   (hashq-set! a 'active #t)
+   (define-test "extract-parameter"
+     (pass-if-true (extract-parameter a 'active)))))

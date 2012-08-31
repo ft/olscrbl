@@ -5,7 +5,9 @@
   #:use-module (olscrbl config)
   #:use-module (olscrbl config internal)
   #:use-module (olscrbl reader)
-  #:export (cnt-accounts
+  #:export (account-active?
+            account-parameter
+            cnt-accounts
             cnt-actions
             cnt-matchers
             for-all-matchers
@@ -14,6 +16,12 @@
             matcher-get-accounts
             matcher-get-predicates
             register-reader))
+
+(define (account-parameter a p)
+  (extract-parameter (get-account a) p))
+
+(define (account-active? a)
+  (account-parameter a 'active))
 
 (define (matcher-get-accounts m)
   (car m))
