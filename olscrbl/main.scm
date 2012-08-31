@@ -20,7 +20,10 @@
          (if (get-opt-unsafe 'note-default-matcher)
              (format #t "No matchers defined. Registering the default.\n"))
          (match-entry #:predicate (code #t))))
+  ;; Register the default scrobbler-log reader.
   (initialise-scrobbler-reader)
+  ;; Use the scrobbler-log reader the user actually configured, which will be
+  ;; the default reader most of the time, unless the user defined a custom one.
   (submit/setup-reader (get-opt-unsafe 'log-file-type))
   (cond ((null? *program-args-non-options*)
          (submit-with-port (current-input-port)))
