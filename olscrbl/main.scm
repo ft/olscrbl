@@ -21,10 +21,7 @@
              (format #t "No matchers defined. Registering the default.\n"))
          (match-entry #:predicate (code #t))))
   (initialise-scrobbler-reader)
-  ;;(pretty-print (@@ (olscrbl reader) reader))
-  ;;(pretty-print (get-opt-unsafe 'log-file-type))
   (submit/setup-reader (get-opt-unsafe 'log-file-type))
-  ;;(submit/setup-threads accounts)
   (cond ((null? *program-args-non-options*)
          (submit-with-port (current-input-port)))
         (else
