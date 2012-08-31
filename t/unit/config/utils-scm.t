@@ -5,7 +5,7 @@
 (primitive-load "taptest-config.scm")
 
 (with-fs-test-bundle
- (no-plan)
+ (plan 15)
 
  (define-test "accounts empty #1"
    (pass-if-= (cnt-accounts)
