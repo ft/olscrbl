@@ -112,7 +112,7 @@
                  (submit-uri-string (cadddr body))
                  (a (get-account account))
                  (proc (make-submissions-stream-proc
-                        (hashq-ref a 'max-submissions)))
+                        (extract-parameter a 'max-submissions)))
                  (track-stream
                   (make-stream proc (filter (lambda (dat)
                                               (not (run-matchers account dat)))
@@ -130,10 +130,10 @@
 (define (generate-scrobbling-handshake account)
   (let* ((proto-ver "1.2.1")
          (a (get-account account))
-         (uri (hashq-ref a 'uri))
-         (port (hashq-ref a 'port))
-         (user (hashq-ref a 'user))
-         (pass (hashq-ref a 'password))
+         (uri (extract-parameter a 'uri))
+         (port (extract-parameter a 'port))
+         (user (extract-parameter a 'user))
+         (pass (extract-parameter a 'password))
          (client-id "tst")
          (client-ver "0.2.1")
          (ts (timestamp))
