@@ -22,6 +22,7 @@
 (define parse-record #f)
 (define valid-data? #f)
 (define extract-data #f)
+(define produce-record #f)
 
 (define submissions #f)
 
@@ -153,4 +154,5 @@
   (set! read-record (reader-get-proc type 'read-record))
   (set! parse-record (reader-get-proc type 'parse-record))
   (set! valid-data? (reader-get-proc type 'valid-data))
-  (set! extract-data (reader-get-proc type 'extract-data)))
+  (set! extract-data (reader-get-proc type 'extract-data))
+  (set! produce-record (reader-get-proc type 'produce-record)))
