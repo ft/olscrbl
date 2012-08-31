@@ -4,6 +4,7 @@
   #:use-module (ice-9 streams)
   #:use-module (ice-9 optargs)
   #:use-module (ice-9 pretty-print)
+  #:use-module (ice-9 threads)
   #:use-module (web client)
   #:use-module (web response)
   #:use-module (web uri)
@@ -49,10 +50,16 @@
 
 ;; Call `submit-tracks-for-account' for every active account.
 (define (submit-tracks tracks)
-  (map (lambda (account)
-         (submit-tracks-for-account account tracks))
-       (filter account-active?
-               (get-accounts))))
+  (let* ((active-accounts (filter account-active?
+                                  (get-accounts)))
+         (n (length active-accounts)))
+    (cond ((= n 1)
+           (submit-tracks-for-account (car active-accounts) tracks))
+          (else
+           (n-par-for-each (length active-accounts)
+                           (lambda (account)
+                             (submit-tracks-for-account account tracks))
+                           active-accounts)))))
 
 ;; Returns a function that can be used with `make-stream' to create a stream of
 ;; tracks. Streams like that return chunks of a larger list that are at most
