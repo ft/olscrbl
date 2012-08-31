@@ -2,6 +2,7 @@
   #:use-module (ice-9 rdelim)
   #:use-module (ice-9 receive)
   #:use-module (ice-9 streams)
+  #:use-module (ice-9 optargs)
   #:use-module (ice-9 pretty-print)
   #:use-module (web client)
   #:use-module (web response)
@@ -85,8 +86,6 @@
          `(0 . ,(format #f "s=~a&portable=1" session-id))
          tracks)))
 
-;; Perform a handshake, then submit all tracks that for which at least one
-;; matcher returns a true value.
 (define (submit-tracks-for-account account tracks)
   (let ((uri (string->uri (generate-scrobbling-handshake account))))
     (format #t " -!- handshake: ~s~%" (generate-scrobbling-handshake account))
@@ -96,27 +95,36 @@
       (format #t " -!- body: ~s~%" b)
       (let* ((body (string-split b #\newline))
              (status (car body)))
-        (cond
-         ((not (string=? status "OK"))
-          (format #t "Handshake failed (~a).~%" status))
-         (else
-          (let* ((session-id (cadr body))
-                 (submit-uri-string (cadddr body))
-                 (a (get-account account))
-                 (proc (make-submissions-stream-proc
-                        (extract-parameter a 'max-submissions)))
-                 (track-stream
-                  (make-stream proc (filter (lambda (dat)
+        (cond ((not (string=? status "OK"))
+               (format #t "Handshake failed (~a).~%" status))
+              (else
+               (format #t " -!- status: ~a~%" status)
+               (do-submit #:account account
+                          #:session-id (cadr body)
+                          #:submit-uri-string (cadddr body)
+                          #:tracks tracks)))))))
+
+(define* (do-submit #:key
+                    account
+                    session-id
+                    submit-uri-string
+                    tracks)
+  ;; The trick here, is to turn `tracks' into a data stream, from which you get
+  ;; a list of at most `max-submissions' tracks each time you pick something
+  ;; from it.
+  (let* ((proc (make-submissions-stream-proc
+                (account-parameter account 'max-submissions)))
+         (track-stream (make-stream proc
+                                    (filter (lambda (dat)
                                               (not (run-matchers account dat)))
                                             tracks))))
-            (format #t " -!- status: ~a~%" status)
-            (format #t " -!- session-id: ~a~%" session-id)
-            (format #t " -!- submit-uri-string: ~a~%" submit-uri-string)
-            (stream-for-each (lambda (chunk)
-                               (http-post
-                                submit-uri-string
-                                (list (generate-submissions session-id chunk))))
-                             track-stream))))))))
+    (format #t " -!- session-id: ~a~%" session-id)
+    (format #t " -!- submit-uri-string: ~a~%" submit-uri-string)
+    (stream-for-each
+     (lambda (chunk)
+       (http-post submit-uri-string (list
+                                     (generate-submissions session-id chunk))))
+     track-stream)))
 
 (define protocol-charset
   (string->char-set (string-concatenate '("-.:=/?&"
