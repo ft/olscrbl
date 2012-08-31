@@ -126,6 +126,12 @@
                                 (list (generate-submissions session-id chunk))))
                              track-stream))))))))
 
+(define protocol-charset
+  (string->char-set (string-concatenate '("-.:=/?&"
+                                          "0123456789"
+                                          "abcdefghijklmnopqrstuvwxyz"
+                                          "ABCDEFGHIJKLMNOPQRSTUVWXYZ"))))
+
 ;; Generates a handshake URI for `account'.
 (define (generate-scrobbling-handshake account)
   (let* ((proto-ver "1.2.1")
@@ -142,12 +148,7 @@
      (format #f "http://~a:~a/?hs=true&p=~a&c=~a&v=~a&u=~a&t=~a&a=~a"
              uri port proto-ver client-id client-ver user ts token)
      #:encoding "utf8"
-     #:unescaped-chars (string->char-set
-                        (string-concatenate
-                         (list "-.:=/?&"
-                               "0123456789"
-                               "abcdefghijklmnopqrstuvwxyz"
-                               "ABCDEFGHIJKLMNOPQRSTUVWXYZ"))))))
+     #:unescaped-chars protocol-charset)))
 
 (define (submit/setup-reader type)
   (set! read-record (reader-get-proc type 'read-record))
