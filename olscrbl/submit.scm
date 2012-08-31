@@ -24,8 +24,6 @@
 (define extract-data #f)
 (define produce-record #f)
 
-(define submissions #f)
-
 ;; Turns a file name into a port and applies `submit-with-port' to it.
 (define (submit-with-file file)
   (let ((fh (open-input-file file)))
