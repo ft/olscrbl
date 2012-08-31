@@ -10,7 +10,8 @@
             keys
             internal/get-option
             internal/initialise-options
-            internal/set-option))
+            internal/set-option
+            verify-type))
 
 (define accounts (make-hash-table 8))
 (define actions (make-hash-table))
@@ -66,3 +67,18 @@
 
 (define (get-account a)
   (hashq-ref accounts a))
+
+
+(define-syntax verify-type
+  (syntax-rules()
+    ((_ caller var predicate)
+     (if (or (predicate var)
+             (thunk? var))
+         #t
+         (let* ((p (symbol->string (quote predicate)))
+                (l (- (string-length p) 1)))
+           (die
+            "\n -!- ~a: `~a' needs to be a ~a (or a thunk producing one).\n\n"
+            (symbol->string caller)
+            (symbol->string (quote var))
+            (substring p 0 l)))))))

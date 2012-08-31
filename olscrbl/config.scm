@@ -4,13 +4,11 @@
   #:use-module (ice-9 optargs)
   #:use-module (olscrbl config internal)
   #:use-module (olscrbl matchers)
-  #:use-module (olscrbl reader)
   #:use-module (olscrbl utils)
   #:export (;; functions
             add-account
             add-action
             match-entry
-            register-reader
             ;; macros
             code
             get-opt
@@ -24,20 +22,6 @@
   (syntax-rules ()
     ((_ xx)
      (lambda () xx))))
-
-(define-syntax verify-type
-  (syntax-rules()
-    ((_ caller var predicate)
-     (if (or (predicate var)
-             (thunk? var))
-         #t
-         (let* ((p (symbol->string (quote predicate)))
-                (l (- (string-length p) 1)))
-           (die
-            "\n -!- ~a: `~a' needs to be a ~a (or a thunk producing one).\n\n"
-            (symbol->string caller)
-            (symbol->string (quote var))
-            (substring p 0 l)))))))
 
 (define-syntax with-unknown-option-catch
   (syntax-rules ()
@@ -138,24 +122,3 @@
              (if album (set! new (cons (cons matcher/album album) new)))
              (if artist (set! new (cons (cons matcher/artist artist) new)))
              new))))))
-
-(define* (register-reader #:key
-                          type
-                          read-record
-                          parse-record
-                          valid-data
-                          extract-data
-                          produce-record)
-  (verify-type 'register-reader type (lambda (t)
-                                       (and (not (eq? t #f))
-                                            (symbol? t))))
-  (verify-type 'register-reader read-record procedure?)
-  (verify-type 'register-reader parse-record procedure?)
-  (verify-type 'register-reader valid-data procedure?)
-  (verify-type 'register-reader extract-data procedure?)
-  (verify-type 'register-reader produce-record procedure?)
-  (reader-set-proc type 'read-record read-record)
-  (reader-set-proc type 'parse-record parse-record)
-  (reader-set-proc type 'valid-data valid-data)
-  (reader-set-proc type 'extract-data extract-data)
-  (reader-set-proc type 'produce-record produce-record))

@@ -4,6 +4,7 @@
 (define-module (olscrbl config utils)
   #:use-module (olscrbl config)
   #:use-module (olscrbl config internal)
+  #:use-module (olscrbl reader)
   #:export (cnt-accounts
             cnt-actions
             cnt-matchers
@@ -11,7 +12,8 @@
             get-accounts
             get-actions
             matcher-get-accounts
-            matcher-get-predicates))
+            matcher-get-predicates
+            register-reader))
 
 (define (matcher-get-accounts m)
   (car m))
@@ -60,3 +62,24 @@
 
 (define (cnt-matchers)
   (length matchers))
+
+(define* (register-reader #:key
+                          type
+                          read-record
+                          parse-record
+                          valid-data
+                          extract-data
+                          produce-record)
+  (verify-type 'register-reader type (lambda (t)
+                                       (and (not (eq? t #f))
+                                            (symbol? t))))
+  (verify-type 'register-reader read-record procedure?)
+  (verify-type 'register-reader parse-record procedure?)
+  (verify-type 'register-reader valid-data procedure?)
+  (verify-type 'register-reader extract-data procedure?)
+  (verify-type 'register-reader produce-record procedure?)
+  (reader-set-proc type 'read-record read-record)
+  (reader-set-proc type 'parse-record parse-record)
+  (reader-set-proc type 'valid-data valid-data)
+  (reader-set-proc type 'extract-data extract-data)
+  (reader-set-proc type 'produce-record produce-record))

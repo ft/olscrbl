@@ -1,6 +1,6 @@
 (define-module (olscrbl scrobbler-log)
   #:use-module (ice-9 rdelim)
-  #:use-module (olscrbl config)
+  #:use-module (olscrbl config utils)
   #:export (extract-data
             parse-record
             read-record
