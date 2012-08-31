@@ -84,4 +84,8 @@
 
  (define-test "account-parameter"
    (pass-if-= (account-parameter 'last-fm 'port)
-              80)))
+              80))
+
+ (define-test "cnt-active-accounts"
+   (pass-if-= (cnt-active-accounts)
+              1)))

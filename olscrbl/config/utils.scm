@@ -5,9 +5,11 @@
   #:use-module (olscrbl config)
   #:use-module (olscrbl config internal)
   #:use-module (olscrbl reader)
+  #:use-module (srfi srfi-1)
   #:export (account-active?
             account-parameter
             cnt-accounts
+            cnt-active-accounts
             cnt-actions
             cnt-matchers
             for-all-matchers
@@ -58,6 +60,14 @@
 
 (define (cnt-accounts)
   (length (get-accounts)))
+
+(define (cnt-active-accounts)
+  (fold (lambda (account accumulator)
+          (if (account-active? account)
+              (1+ accumulator)
+              accumulator))
+        0
+        (get-accounts)))
 
 (define (get-accounts)
   (keys accounts))
