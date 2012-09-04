@@ -11,21 +11,23 @@ fi
 VERBOSE=${VERBOSE:-1}
 
 if test $VERBOSE -ge 1; then
-    RUNTESTS_PROVE_VERBOSE=1
-    export RUNTESTS_PROVE_VERBOSE
+    _options="-verbose"
 fi
 if test $VERBOSE -ge 2; then
-    DISPATCH_VERBOSE=1
-    export DISPATCH_VERBOSE
+    _options="$_options -dispatch-verbose"
+fi
+if test $VERBOSE -ge 3; then
+    _options="$_options -debug"
 fi
 
 ROOT=$PWD
 
 cd t/unit
 
-sh "$ROOT/test-dispatch/runtests" "$ROOT" \
-                                  "$ROOT" \
-                                  . \
-                                  . \
-                                  "$ROOT/test-dispatch/dispatch"
+sh "$ROOT/test-dispatch/runtests" $_options \
+                                  -source-dir "$ROOT" \
+                                  -binary-dir "$ROOT" \
+                                  -dispatch-root "." \
+                                  -dispatch-bin-root "." \
+                                  -dispatch "$ROOT/test-dispatch/dispatch"
 exit $?
