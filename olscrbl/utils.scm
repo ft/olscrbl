@@ -5,13 +5,9 @@
             open-utf8-file
             timestamp))
 
-
-(define-syntax die
-  (syntax-rules ()
-    ((_ fmt args ...)
-     (begin
-       (format #t fmt args ...)
-       (quit 1)))))
+(define (die . args)
+  (apply format #t args)
+  (quit 1))
 
 (define (open-utf8-file fn mode)
   (let ((port (open-file fn mode)))
