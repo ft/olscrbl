@@ -13,7 +13,6 @@
   #:use-module (olscrbl reader)
   #:use-module (olscrbl utils)
   #:use-module (olscrbl md5)
-  #:use-module (olscrbl http)
   #:use-module (olscrbl config utils)
   #:use-module (olscrbl config internal)
   #:export (submit/setup-reader
@@ -129,8 +128,13 @@
     (format #t " -!- submit-uri-string: ~a~%" submit-uri-string)
     (stream-for-each
      (lambda (chunk)
-       (http-post submit-uri-string (list
-                                     (generate-submissions session-id chunk))))
+       (let ((body (generate-submissions session-id chunk)))
+         (receive (r response)
+             (http-post submit-uri-string
+                        #:body body
+                        #:headers '((content-type
+                                     . (application/x-www-form-urlencoded))))
+           response)))
      track-stream)))
 
 (define protocol-charset
