@@ -73,22 +73,23 @@
              (cons (take state n)
                    (drop state n)))))))
 
+(define submission-argument
+  "&a[~d]=~a&t[~d]=~a&b[~d]=~a&l[~d]=~a&n[~d]=~a&i[~d]=~a&o[~d]=P&r[~d]=&m[~d]=")
+
 (define (generate-submissions session-id tracks)
   (cdr
    (fold (lambda (new prev)
            (let ((num (car prev))
                  (l (cdr prev)))
              (cons (+ 1 num)
-                   (string-append l
-                                  (format #f
-"&a[~d]=~a&t[~d]=~a&b[~d]=~a&l[~d]=~a&n[~d]=~a&i[~d]=~a&o[~d]=P&r[~d]=&m[~d]="
-                                          num (extract-data new 'artist)
-                                          num (extract-data new 'track)
-                                          num (extract-data new 'album)
-                                          num (extract-data new 'duration)
-                                          num (extract-data new 'tracknumber)
-                                          num (extract-data new 'timestamp)
-                                          num num num)))))
+                   (string-append l (format #f submission-argument
+                                            num (extract-data new 'artist)
+                                            num (extract-data new 'track)
+                                            num (extract-data new 'album)
+                                            num (extract-data new 'duration)
+                                            num (extract-data new 'tracknumber)
+                                            num (extract-data new 'timestamp)
+                                            num num num)))))
          `(0 . ,(format #f "s=~a&portable=1" session-id))
          tracks)))
 
