@@ -80,6 +80,7 @@
             (format #t "~a\n\n" args)
             (if (string= reason "quit")
                 (quit 1))
+            ;; TODO: Need to close&reopen stdin if it's not a terminal
             (format #t "Hit <ENTER> to continue or <CTRL-C> to abort.\n\n")
             (let nc ((c #\a))
               (if (eq? c #\newline)
