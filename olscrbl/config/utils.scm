@@ -26,10 +26,10 @@
   (account-parameter a 'active))
 
 (define (matcher-get-accounts m)
-  (car m))
+  (hashq-ref m 'accounts))
 
 (define (matcher-get-predicates m)
-  (cadr m))
+  (hashq-ref m 'predicates))
 
 ;; for-all-matchers:
 ;;

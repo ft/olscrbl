@@ -99,6 +99,13 @@
     (hashq-set! new 'type type)
     (hashq-set! new 'code code)))
 
+(define-syntax add-predicate-maybe
+  (syntax-rules ()
+    ((_ var)
+     (if var var '()))
+    ((_ var pred)
+     (if var pred '()))))
+
 (define* (match-entry #:key
                       accounts
                       artist
@@ -113,15 +120,15 @@
       (verify-type 'match-entry album string?))
   (or (eq? track #f)
       (verify-type 'match-entry track string?))
-  (set! matchers
-        (append
-         matchers
-         (list
-          (list
-           accounts
-           (let ((new '()))
-             (if predicate (set! new (cons predicate new)))
-             (if track (set! new (cons (cons matcher/track track) new)))
-             (if album (set! new (cons (cons matcher/album album) new)))
-             (if artist (set! new (cons (cons matcher/artist artist) new)))
-             new))))))
+  (let ((new (make-hash-table))
+        (predicates
+         (filter (lambda (x) (not (null? x)))
+                 (list
+                  (add-predicate-maybe predicate)
+                  (add-predicate-maybe album (cons matcher/album album))
+                  (add-predicate-maybe artist (cons matcher/artist artist))
+                  (add-predicate-maybe track (cons matcher/track track))))))
+    (hashq-set! new 'accounts (or accounts #f))
+    (hashq-set! new 'predicates predicates)
+    (set! matchers (append matchers (list new))))
+  matchers)
