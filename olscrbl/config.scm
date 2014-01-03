@@ -124,10 +124,12 @@
         (predicates
          (filter (lambda (x) (not (null? x)))
                  (list
-                  (add-predicate-maybe predicate)
                   (add-predicate-maybe album (cons matcher/album album))
                   (add-predicate-maybe artist (cons matcher/artist artist))
-                  (add-predicate-maybe track (cons matcher/track track))))))
+                  (add-predicate-maybe track (cons matcher/track track))
+                  ;; The ‘predicate’ predicate is potentially the most
+                  ;; expensive one to call, so do it at the end!
+                  (add-predicate-maybe predicate)))))
     (hashq-set! new 'accounts (or accounts #f))
     (hashq-set! new 'predicates predicates)
     (set! matchers (append matchers (list new))))
