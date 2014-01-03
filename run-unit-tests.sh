@@ -1,9 +1,28 @@
 #!/bin/sh
 
-if ! test -f scmtap/scm/taptest.scm; then
+got_program () {
+    oldifs_="$IFS"
+    IFS=:
+    found_=0
+    for p in $PATH; do
+        if [ -x "$p/$1" ]; then
+            found_=1
+            break
+        fi
+    done
+    IFS="$oldifs_"
+    [ "$found_" = 1 ] && return 0
+    return 1
+}
+
+got_module () {
+    guile --no-auto-compile -q -c "(use-modules $1)" 2> /dev/null
+}
+
+if ! got_module "(test tap)"; then
     printf 'Testing module not available: Skipping unit tests.\n'
     exit 0
-elif ! test -f test-dispatch/runtests; then
+elif ! got_program run-tests; then
     printf 'Test-bundle dispatcher not available: Skipping unit tests.\n'
     exit 0
 fi
@@ -24,10 +43,9 @@ ROOT=$PWD
 
 cd t/unit
 
-sh "$ROOT/test-dispatch/runtests" $_options \
-                                  -source-dir "$ROOT" \
-                                  -binary-dir "$ROOT" \
-                                  -dispatch-root "." \
-                                  -dispatch-bin-root "." \
-                                  -dispatch "$ROOT/test-dispatch/dispatch"
+sh "run-tests" $_options \
+               -source-dir "$ROOT" \
+               -binary-dir "$ROOT" \
+               -dispatch-root "." \
+               -dispatch-bin-root "."
 exit $?
