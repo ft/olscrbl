@@ -7,7 +7,7 @@
 (with-fs-test-bundle
  (plan 13)
  (let ((record "a\tb\tc\t23\t123\tl\t1234123444\tcafebabeebabefac")
-       (parsed '("a" "b" "c" "23" "123" "l" "1234123444" "cafebabeebabefac"))
+       (parsed '("a" "b" "c" "23" 123 "l" 1234123444 "cafebabeebabefac"))
        (items '(artist
                 album track tracknumber
                 duration status timestamp musicbrainz)))
@@ -30,8 +30,9 @@
      (pass-if-false (valid-data? (cons "stuff" parsed))))
 
    (for-each (lambda (data item)
-               (define-test (format #f "extract-data `~a'" item)
-                 (pass-if-string=? data
-                                   (extract-data parsed item))))
+               (let ((d (extract-data parsed item)))
+                 (define-test (format #f "extract-data `~a'" item)
+                   (cond ((integer? d) (pass-if-= data d))
+                         (else (pass-if-string=? data d))))))
              parsed
              items)))
