@@ -12,7 +12,14 @@
   (read-line port 'trim))
 
 (define (parse-record rec)
-  (string-split rec #\tab))
+  (let ((retval (string-split rec #\tab)))
+    (if (valid-data? retval)
+        (map (lambda (x)
+               (set-data! retval
+                          x
+                          (string->number (extract-data retval x))))
+             '(timestamp duration)))
+    retval))
 
 (define (valid-data? dat)
   (= (length dat) 8))
@@ -30,24 +37,32 @@
           (extract-data dat 'musicbrainz)))
 
 (define datidx (make-hash-table 8))
-(hash-set! datidx 'artist 0)
-(hash-set! datidx 'album 1)
-(hash-set! datidx 'track 2)
-(hash-set! datidx 'tracknumber 3)
-(hash-set! datidx 'duration 4)
-(hash-set! datidx 'status 5)
-(hash-set! datidx 'timestamp 6)
-(hash-set! datidx 'musicbrainz 7)
+(hashq-set! datidx 'artist 0)
+(hashq-set! datidx 'album 1)
+(hashq-set! datidx 'track 2)
+(hashq-set! datidx 'tracknumber 3)
+(hashq-set! datidx 'duration 4)
+(hashq-set! datidx 'status 5)
+(hashq-set! datidx 'timestamp 6)
+(hashq-set! datidx 'musicbrainz 7)
 
 (define (extract-data dat what)
-  (let ((idx (hash-ref datidx what)))
+  (let ((idx (hashq-ref datidx what)))
     (cond ((not idx) (throw 'unknown-data-entity))
-          (else (list-ref dat (hash-ref datidx what))))))
+          (else (list-ref dat (hashq-ref datidx what))))))
+
+(define (valid-keys)
+  '(artist album track tracknumber duration status timestamp musicbrainz))
+
+(define (set-data! track key value)
+  (set-car! (list-tail track (hashq-ref datidx key)) value))
 
 (define (initialise-scrobbler-reader)
   (register-reader #:type 'scrobbler-log
                    #:read-record read-record
                    #:parse-record parse-record
-                   #:valid-data valid-data?
+                   #:valid-data? valid-data?
+                   #:valid-keys valid-keys
                    #:extract-data extract-data
+                   #:set-data! set-data!
                    #:produce-record produce-record))

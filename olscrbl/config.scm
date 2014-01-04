@@ -4,11 +4,14 @@
   #:use-module (ice-9 optargs)
   #:use-module (olscrbl config internal)
   #:use-module (olscrbl matchers)
+  #:use-module (olscrbl pp)
   #:use-module (olscrbl utils)
   #:export (;; functions
             add-account
             add-action
             match-entry
+            pre-process
+            post-process
             ;; macros
             code
             get-opt
@@ -134,3 +137,6 @@
     (hashq-set! new 'predicates predicates)
     (set! matchers (append matchers (list new))))
   matchers)
+
+(define pre-process (make-processing-plant))
+(define post-process (make-processing-plant))

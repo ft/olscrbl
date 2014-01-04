@@ -85,19 +85,25 @@
                           type
                           read-record
                           parse-record
-                          valid-data
+                          valid-data?
+                          valid-keys
                           extract-data
+                          set-data!
                           produce-record)
   (verify-type 'register-reader type (lambda (t)
                                        (and (not (eq? t #f))
                                             (symbol? t))))
   (verify-type 'register-reader read-record procedure?)
   (verify-type 'register-reader parse-record procedure?)
-  (verify-type 'register-reader valid-data procedure?)
+  (verify-type 'register-reader valid-data? procedure?)
+  (verify-type 'register-reader valid-keys procedure?)
   (verify-type 'register-reader extract-data procedure?)
+  (verify-type 'register-reader set-data! procedure?)
   (verify-type 'register-reader produce-record procedure?)
   (reader-set-proc type 'read-record read-record)
   (reader-set-proc type 'parse-record parse-record)
-  (reader-set-proc type 'valid-data valid-data)
+  (reader-set-proc type 'valid-data? valid-data?)
+  (reader-set-proc type 'valid-keys valid-keys)
   (reader-set-proc type 'extract-data extract-data)
+  (reader-set-proc type 'set-data! set-data!)
   (reader-set-proc type 'produce-record produce-record))

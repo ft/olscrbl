@@ -13,6 +13,8 @@
   #:use-module (olscrbl reader)
   #:use-module (olscrbl utils)
   #:use-module (olscrbl md5)
+  #:use-module (olscrbl pp)
+  #:use-module (olscrbl config)
   #:use-module (olscrbl config utils)
   #:use-module (olscrbl config internal)
   #:export (submit/setup-reader
@@ -22,8 +24,22 @@
 (define read-record #f)
 (define parse-record #f)
 (define valid-data? #f)
+(define valid-keys #f)
 (define extract-data #f)
+(define set-data! #f)
 (define produce-record #f)
+
+(define (with-pre-process-callbacks tracks)
+  (let ((keys-with-callbacks (pre-process (valid-keys))))
+    (if (null? keys-with-callbacks)
+        tracks
+        (map (lambda (track)
+               (map (lambda (key)
+                      (set-data! track key (process (extract-data track key)
+                                                    (pre-process key))))
+                    keys-with-callbacks)
+               track)
+             tracks))))
 
 ;; Turns a file name into a port and applies `submit-with-port' to it.
 (define (submit-with-file file)
@@ -36,16 +52,17 @@
 ;; ignored.
 (define (submit-with-port port)
   (submit-tracks
-   (let loop ((s '()))
-     (let ((rec (read-record port)))
-       (cond
-        ((eof-object? rec) s)
-        (else
-         (let ((dat (parse-record rec)))
-           (loop (if (valid-data? dat)
-                     (append s (list dat))
-                     ;; Ignore invalid entries.
-                     s)))))))))
+   (with-pre-process-callbacks
+    (let loop ((s '()))
+      (let ((rec (read-record port)))
+        (cond
+         ((eof-object? rec) s)
+         (else
+          (let ((dat (parse-record rec)))
+            (loop (if (valid-data? dat)
+                      (append s (list dat))
+                      ;; Ignore invalid entries.
+                      s))))))))))
 
 ;; Call `submit-tracks-for-account' for every active account.
 (define (submit-tracks tracks)
@@ -165,6 +182,8 @@
 (define (submit/setup-reader type)
   (set! read-record (reader-get-proc type 'read-record))
   (set! parse-record (reader-get-proc type 'parse-record))
-  (set! valid-data? (reader-get-proc type 'valid-data))
+  (set! valid-data? (reader-get-proc type 'valid-data?))
+  (set! valid-keys (reader-get-proc type 'valid-keys))
   (set! extract-data (reader-get-proc type 'extract-data))
+  (set! set-data! (reader-get-proc type 'set-data!))
   (set! produce-record (reader-get-proc type 'produce-record)))
