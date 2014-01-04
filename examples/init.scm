@@ -1,9 +1,8 @@
 ;;; Example ‘olscrbl’ initialisation file.   -*- scheme -*-
 ;;; ...with annotations.
 
-;; First, load the main configuration module, so that the configuration API is
-;; available to us.
-(use-modules (olscrbl config))
+;; The configuration file is loaded in the realm of the main configuration
+;; module (olscrbl config), which means that its API is available to us.
 
 ;; One part of the API is access to an option value name-space. This uses
 ;; ‘set-opt’ in order to tell ‘olscrbl’, that it doesn't have to tell us, if

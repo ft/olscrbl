@@ -68,7 +68,11 @@
               (begin
                 (if (not load-quiet)
                     (format #t "Loading cfg: `~a'...\n" file))
-                (primitive-load file))
+                (let ((cfg-mod (resolve-module '(olscrbl config))))
+                  (save-module-excursion
+                   (lambda ()
+                     (set-current-module cfg-mod)
+                     (primitive-load file)))))
               (format #t "No configuration file found, at: `~a'\n"
                       file)))
         (lambda (key . args)
