@@ -10,6 +10,21 @@
 ;; default one, is). This let's the program start less noisy.
 (set-opt note-default-matcher #f)
 
+;; Last.fm feels like deprecating the old submission protocol for a while now.
+;; They are not issuing new client-identifiers for the protocol anymore, which
+;; means that olscrbl is not going to get one. They are also suggesting that
+;; they are going to disable the "tst" id at some point. By default, ‘olscrbl’
+;; uses the client id "ols" with its version set to olscrbl's version.
+;;
+;; Libre.fm on the other hand doesn't care about which client version you use.
+;;
+;; To get the program working with services that care, the client-id as well as
+;; the client-version are configurable. Here are two settings, that will make
+;; olscrbl fake to look like xmms2-scrobbler, with one of its recent version
+;; numbers:
+(set-opt client-identifier "xm2")
+(set-opt client-version "0.2.9")
+
 ;; Now let's add an account. This one is for the popular last.fm service, which
 ;; scrobbles via audioscrobbler.com:
 (add-account :name 'last-fm

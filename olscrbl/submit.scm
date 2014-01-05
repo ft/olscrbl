@@ -161,8 +161,8 @@
          (port (extract-parameter a 'port))
          (user (extract-parameter a 'user))
          (pass (extract-parameter a 'password))
-         (client-id "tst")
-         (client-ver "0.2.1")
+         (client-id (get-opt-unsafe 'client-identifier))
+         (client-ver (get-opt-unsafe 'client-version))
          (ts (timestamp))
          (token (md5 (format #f "~a~d" (md5 pass) ts))))
     (uri-encode

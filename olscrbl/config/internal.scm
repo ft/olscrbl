@@ -2,6 +2,7 @@
   #:use-module (ice-9 format)
   #:use-module (ice-9 pretty-print)
   #:use-module (olscrbl terminal-io)
+  #:use-module (olscrbl definitions)
   #:export (accounts
             actions
             extract-parameter
@@ -36,6 +37,8 @@
              hash))
 
 (define (internal/initialise-options)
+  (hash-set! options 'client-identifier "ols")
+  (hash-set! options 'client-version *program-version*)
   (hash-set! options 'log-file-type 'scrobbler-log)
   (hash-set! options 'unmatched-entries 'keep)
   (hash-set! options 'note-default-matcher #t))
@@ -46,6 +49,8 @@
   (cond ((eq? key 'unmatched-entries)
          (eq? (memq value valid/unmatched-entries)
               #f))
+        ((memq key '(client-version client-identifier))
+         (not (string? value)))
         ((eq? key 'note-default-matcher)
          (not (boolean? value)))
         ((eq? key 'log-file-type)
