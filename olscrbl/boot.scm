@@ -131,8 +131,8 @@
               rest)))))
 
 (define (usage)
-  (format #t "usage: ~a [OPTION(s)]~%~%" *program-name*)
-  (format #t "  Options:~%~%")
+  (io "usage: ~a [OPTION(s)]~%~%" *program-name*)
+  (io "  Options:~%~%")
   (for-each (lambda (opt)
               (for-each display
                         (generate-help-for-opt option-max-width opt)))
@@ -147,13 +147,13 @@
             olscrbl-licence))
 
 (define (just-version)
-  (format #t "~a version ~a~%" *program-name* *program-version*)
+  (io "~a version ~a~%" *program-name* *program-version*)
   (if (string-null? *program-code-name*)
       ""
-      (format #t "code-name: ~a~%" *program-code-name*)))
+      (io "code-name: ~a~%" *program-code-name*)))
 
 (define (build-time desc value)
-  (format #t "  ~32@a: ~a~%"
+  (io "  ~32@a: ~a~%"
           desc
           (cond ((boolean? value) (if value "ON" "OFF"))
                 (else value))))
