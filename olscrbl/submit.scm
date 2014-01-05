@@ -14,20 +14,13 @@
   #:use-module (olscrbl utils)
   #:use-module (olscrbl md5)
   #:use-module (olscrbl pp)
+  #:use-module (olscrbl data-access)
   #:use-module (olscrbl config)
   #:use-module (olscrbl config utils)
   #:use-module (olscrbl config internal)
   #:export (submit/setup-reader
             submit-with-file
             submit-with-port))
-
-(define read-record #f)
-(define parse-record #f)
-(define valid-data? #f)
-(define valid-keys #f)
-(define extract-data #f)
-(define set-data! #f)
-(define produce-record #f)
 
 (define (with-pre-process-callbacks tracks)
   (let ((keys-with-callbacks (pre-process (valid-keys))))
