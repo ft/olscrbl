@@ -14,7 +14,7 @@
 (define *program-args* '())
 (define *program-name* "*init*")
 (define *program-code-name* build-cfg/code-name)
-(define *program-version* "*unversioned*")
+(define *program-version* "0.1")
 
 (define *home-directory* (getenv "HOME"))
 
