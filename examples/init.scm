@@ -16,7 +16,7 @@
 ;; they are going to disable the "tst" id at some point. By default, ‘olscrbl’
 ;; uses the client id "ols" with its version set to olscrbl's version.
 ;;
-;; Libre.fm on the other hand doesn't care about which client version you use.
+;; Libre.fm on the other hand doesn't care about which client id you use.
 ;;
 ;; To get the program working with services that care, the client-id as well as
 ;; the client-version are configurable. Here are two settings, that will make
