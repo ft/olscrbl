@@ -144,29 +144,6 @@ one or more input files on the command line (all of which have to have the same
 file format) or `//olscrbl//' reads records from its standard input.
 
 
-== Output ==
-
-`//olscrbl//' does produce output files. All output file names are based on the
-respective input file names. When records are read from the standard input, the
-base name for the output files is taken from the `**stdin-output**' option.
-
-When an input file is processed, that input file is first renamed to
-"//<oldname>//.olscrbl". Processing then takes place. (The //<oldname>// part
-is refered to as `//<base>//' below.)
-
-The following output files are produced:
-
-: //<base>//
-
-All tracks that were processed by the `//keep//' target will be recorded here.
-
-: //<base>//.failed[**.<account>**]
-
-When submission of a track fails, its record is put into this file. The
-`**.account**' part is added only if more than one account is defined (or the
-`//output-always-account//' options is set).
-
-
 == Matching Tracks ==
 
 By using `**match-entry**', it can configured which tracks are submitted to
@@ -174,8 +151,8 @@ which account. If no such matcher is defined, a default matcher is registered,
 which matches every track and causes them to be submitted to all defined
 accounts.
 
-You can //keep//, //drop// and //submit// tracks matched like this or cause
-user-defined actions to be taken (defined by `**add-action**').
+You can //drop// and //submit// tracks matched like this or cause user-defined
+actions to be taken (defined by `**add-action**').
 
 
 == Submission ==
@@ -311,11 +288,6 @@ die (unless the `**quit**' exception is caught by the surrounding code).
 The following options can be changed using the `//set-opt//' procedure and they
 are accessible via `//get-opt//'. Both procedures are described in
 **SCHEME API** above.
-
-: **unmatched-entries** (Symbol; default: //keep//)
-
-Decides what should be done with log entries that are left after all matchers
-have been run. Valid symbols are //keep// and //drop//.
 
 : **note-default-matcher** (Boolean; default: //#t//)
 
