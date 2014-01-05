@@ -13,6 +13,7 @@
   #:use-module (olscrbl reader)
   #:use-module (olscrbl utils)
   #:use-module (olscrbl md5)
+  #:use-module (olscrbl terminal-io)
   #:use-module (olscrbl pp)
   #:use-module (olscrbl data-access)
   #:use-module (olscrbl config)
@@ -111,9 +112,9 @@
       (let* ((body (string-split b #\newline))
              (status (car body)))
         (cond ((not (string=? status "OK"))
-               (format #t " -!- [~a] handshake failed (~a).~%" account status))
+               (io " -!- [~a] handshake failed (~a).~%" account status))
               (else
-               (format #t " -!- [~a] handshake status: ~a~%" account status)
+               (io " -!- [~a] handshake status: ~a~%" account status)
                (do-submit #:account account
                           #:session-id (cadr body)
                           #:submit-uri-string (cadddr body)
@@ -133,8 +134,8 @@
                                     (filter (lambda (dat)
                                               (not (run-matchers account dat)))
                                             tracks))))
-    (format #t " -!- [~a] session-id: ~a~%" account session-id)
-    (format #t " -!- [~a] submit-uri-string: ~a~%" account submit-uri-string)
+    (io " -!- [~a] session-id: ~a~%" account session-id)
+    (io " -!- [~a] submit-uri-string: ~a~%" account submit-uri-string)
     (stream-for-each
      (lambda (chunk)
        (let ((body (generate-submissions session-id chunk)))

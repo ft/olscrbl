@@ -1,6 +1,7 @@
 (define-module (olscrbl config internal)
   #:use-module (ice-9 format)
   #:use-module (ice-9 pretty-print)
+  #:use-module (olscrbl terminal-io)
   #:export (accounts
             actions
             extract-parameter
@@ -50,7 +51,7 @@
         ((eq? key 'log-file-type)
          (not (symbol? value)))
         (else
-         (format #t "Missing verification fct for `~a'.\n" key)
+         (io "Missing verification fct for `~a'.\n" key)
          #f)))
 
 (define (internal/set-option key value)

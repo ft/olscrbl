@@ -2,6 +2,7 @@
   #:use-module (ice-9 format)
   #:use-module (ice-9 getopt-long)
   #:use-module (ice-9 pretty-print)
+  #:use-module (olscrbl terminal-io)
   #:use-module (olscrbl config)
   #:use-module (olscrbl config internal)
   #:use-module (olscrbl definitions)
@@ -23,10 +24,10 @@
                   (tracknumber (single-char #\n) (value #t))))
 
 (define (usage)
-  (format #t "usage: ~a [OPTION(s)] <fetch|poll>\n" *program-name*))
+  (io "usage: ~a [OPTION(s)] <fetch|poll>\n" *program-name*))
 
 (define (version)
-  (format #t "~a version ~a\n" *program-name* *program-version*))
+  (io "~a version ~a\n" *program-name* *program-version*))
 
 (define (set-opt-if-option-set setting options opt transformer)
   (let ((value (option-ref options opt #f)))
@@ -62,13 +63,13 @@
     (let ((file (option-ref options 'config *init-file*)))
       (if (file-exists? file)
           (begin (unless load-quiet
-                   (format #t "Loading cfg: `~a'...\n" file))
+                   (io "Loading cfg: `~a'...\n" file))
                  (let ((cfg-mod (resolve-module '(olscrbl config))))
                    (save-module-excursion
                     (lambda ()
                       (set-current-module cfg-mod)
                       (primitive-load file)))))
-          (format #t "No configuration file found, at: `~a'\n"
+          (io "No configuration file found, at: `~a'\n"
                   file))))
   (set-opt-if-option-set 'log-file-type options 'filetype string->symbol)
   ;; Initialisation done. Load the actual program.
