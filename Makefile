@@ -6,7 +6,7 @@ SED_CN = s,@@prg-code-name@@,$(CODENAME),
 .SUFFIXES:
 .SUFFIXES: .1 .1.t2t
 
-all: olscrbl/build-configuration.scm bin/olscrbl
+all: scheme/olscrbl/build-configuration.scm bin/olscrbl
 
 test: unit-tests functional-tests
 
@@ -23,14 +23,14 @@ doc: olscrbl.1
 happiness: all doc test
 
 clean:
-	rm -f olscrbl/build-configuration.scm bin/olscrbl
+	rm -f scheme/olscrbl/build-configuration.scm bin/olscrbl
 	rm -f olscrbl.1 olscrbl.1.t2t
 	rmdir bin || true
 	find . -name "*.go" -exec rm -f "{}" +
 	rm -Rf t/twd
 	rm -Rf t/logs
 
-olscrbl/build-configuration.scm: olscrbl-build-configuration.in
+scheme/olscrbl/build-configuration.scm: olscrbl-build-configuration.in
 	sed -e "$(SED_XDG)" -e "$(SED_CN)" < $< > $@
 
 bin/olscrbl: olscrbl.in

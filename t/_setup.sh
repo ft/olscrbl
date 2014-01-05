@@ -13,7 +13,7 @@ fi
 
 rootdir=$(cd ..; pwd)
 program="$rootdir/bin/olscrbl"
-GUILE_LOAD_PATH=$rootdir
+GUILE_LOAD_PATH="${rootdir}/scheme"
 GUILE_AUTO_COMPILE=0
 export GUILE_LOAD_PATH
 export GUILE_AUTO_COMPILE
