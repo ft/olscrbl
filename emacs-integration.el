@@ -7,7 +7,8 @@
         (put (car thing)
              'scheme-indent-function
              (cdr thing)))
-      '((with-unknown-option-catch . defun)))
+      '((with-unknown-option-catch . defun)
+        (for-all-matchers . defun)))
 
 (mapc (lambda (subdir)
         (let ((file (concat subdir "/emacs-integration.el")))
