@@ -86,7 +86,7 @@
          #t
          (let* ((p (symbol->string (quote predicate)))
                 (l (- (string-length p) 1)))
-           (die
+           (error
             "\n -!- ~a: `~a' needs to be a ~a (or a thunk producing one).\n\n"
             (symbol->string caller)
             (symbol->string (quote var))

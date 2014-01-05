@@ -33,7 +33,7 @@
        (lambda ()
          code ...)
        (lambda (key . args)
-         (die "Unknown option: ~s\n" (symbol->string (quote opt))))))))
+         (error "Unknown option: ~s\n" (symbol->string (quote opt))))))))
 
 (define-syntax get-opt
   (syntax-rules ()
@@ -49,7 +49,7 @@
          (lambda ()
            (internal/set-option (quote opt) val))
          (lambda (key . args)
-           (die "Broken value for `~a': ~s\n"
+           (error "Broken value for `~a': ~s\n"
                 (quote opt) val)))))))
 
 (define valid-account-types '(as12))
@@ -74,7 +74,7 @@
   (verify-type 'add-account user string?)
   (verify-type 'add-account active boolean?)
   (if (not (memq type valid-account-types))
-      (die "\n -!- add-account: Invalid account type: `~a'.\n\n"
+      (error "\n -!- add-account: Invalid account type: `~a'.\n\n"
            (symbol->string type)))
   (let ((new (hashq-set! accounts name (make-hash-table 6))))
     (hashq-set! new 'options options)
@@ -96,7 +96,7 @@
   (verify-type 'add-action type symbol?)
   (verify-type 'add-action code procedure?)
   (if (not (memq type valid-action-types))
-      (die "\n -!- add-action: Invalid action type: `~a'.\n\n" type))
+      (error "\n -!- add-action: Invalid action type: `~a'.\n\n" type))
   (let ((new (hashq-set! actions name (make-hash-table 2))))
     (hashq-set! new 'type type)
     (hashq-set! new 'code code)))
