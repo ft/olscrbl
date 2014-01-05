@@ -105,17 +105,15 @@
 
 (define (submit-tracks-for-account account tracks)
   (let ((uri (string->uri (generate-scrobbling-handshake account))))
-    (format #t " -!- handshake: ~s~%" (generate-scrobbling-handshake account))
     (receive (h b) (http-get uri)
       (and (not (= 200 (response-code h)))
            (throw 'scrobble-http-handshake-non-200))
-      (format #t " -!- body: ~s~%" b)
       (let* ((body (string-split b #\newline))
              (status (car body)))
         (cond ((not (string=? status "OK"))
-               (format #t "Handshake failed (~a).~%" status))
+               (format #t " -!- [~a] handshake failed (~a).~%" account status))
               (else
-               (format #t " -!- status: ~a~%" status)
+               (format #t " -!- [~a] handshake status: ~a~%" account status)
                (do-submit #:account account
                           #:session-id (cadr body)
                           #:submit-uri-string (cadddr body)
@@ -135,8 +133,8 @@
                                     (filter (lambda (dat)
                                               (not (run-matchers account dat)))
                                             tracks))))
-    (format #t " -!- session-id: ~a~%" session-id)
-    (format #t " -!- submit-uri-string: ~a~%" submit-uri-string)
+    (format #t " -!- [~a] session-id: ~a~%" account session-id)
+    (format #t " -!- [~a] submit-uri-string: ~a~%" account submit-uri-string)
     (stream-for-each
      (lambda (chunk)
        (let ((body (generate-submissions session-id chunk)))
