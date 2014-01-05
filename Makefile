@@ -1,5 +1,7 @@
+CODENAME = ""
 XDG ?= \#f
 SED_XDG = s,@@use-xdg-paths@@,$(XDG),
+SED_CN = s,@@prg-code-name@@,$(CODENAME),
 
 .SUFFIXES:
 .SUFFIXES: .1 .1.t2t
@@ -29,11 +31,11 @@ clean:
 	rm -Rf t/logs
 
 olscrbl/build-configuration.scm: olscrbl-build-configuration.in
-	sed -e "$(SED_XDG)" < $< > $@
+	sed -e "$(SED_XDG)" -e "$(SED_CN)" < $< > $@
 
 bin/olscrbl: olscrbl.in
 	test -d bin || mkdir bin
-	sed -e "$(SED_XDG)" < $< > $@
+	sed -e "$(SED_XDG)" -e "$(SED_CN)" < $< > $@
 	test -x $@ || chmod +x $@
 
 .1.t2t.1:

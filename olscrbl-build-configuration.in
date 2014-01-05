@@ -1,4 +1,8 @@
+;; -*- scheme -*-
+
 (define-module (olscrbl build-configuration)
-  :export (build-cfg/use-xdg-paths))
+  :export (build-cfg/use-xdg-paths
+           build-cfg/code-name))
 
 (define build-cfg/use-xdg-paths @@use-xdg-paths@@)
+(define build-cfg/code-name "@@prg-code-name@@")

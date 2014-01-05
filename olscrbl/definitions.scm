@@ -7,11 +7,13 @@
             *program-args*
             *program-args-non-options*
             *program-name*
+            *program-code-name*
             *program-version*))
 
 (define *guile-binary* "*init*")
 (define *program-args* '())
 (define *program-name* "*init*")
+(define *program-code-name* build-cfg/code-name)
 (define *program-version* "*unversioned*")
 
 (define *home-directory* (getenv "HOME"))
