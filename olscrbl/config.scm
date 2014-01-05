@@ -86,7 +86,7 @@
     (hashq-set! new 'user user)
     (hashq-set! new 'active active)))
 
-(define valid-action-types '(rewrite))
+(define valid-action-types '(final side-effect))
 
 (define* (add-action #:key
                      name
@@ -94,10 +94,9 @@
                      code)
   (verify-type 'add-action name symbol?)
   (verify-type 'add-action type symbol?)
-  (verify-type 'add-action code thunk?)
+  (verify-type 'add-action code procedure?)
   (if (not (memq type valid-action-types))
-      (die "\n -!- add-action: Invalid action type: `~a'.\n\n"
-           (symbol->string type)))
+      (die "\n -!- add-action: Invalid action type: `~a'.\n\n" type))
   (let ((new (hashq-set! actions name (make-hash-table 2))))
     (hashq-set! new 'type type)
     (hashq-set! new 'code code)))
@@ -111,12 +110,15 @@
 
 (define* (match-entry #:key
                       accounts
+                      action
                       artist
                       album
                       track
                       predicate)
   (or (eq? accounts #f)
       (verify-type 'match-entry accounts list?))
+  (or (eq? action #f)
+      (verify-type 'match-entry action symbol?))
   (or (eq? artist #f)
       (verify-type 'match-entry artist string?))
   (or (eq? album #f)
@@ -134,6 +136,7 @@
                   ;; expensive one to call, so do it at the end!
                   (add-predicate-maybe predicate)))))
     (hashq-set! new 'accounts (or accounts #f))
+    (hashq-set! new 'action (or action 'submit))
     (hashq-set! new 'predicates predicates)
     (set! matchers (append matchers (list new))))
   matchers)

@@ -16,6 +16,7 @@
             get-accounts
             get-actions
             matcher-get-accounts
+            matcher-get-action
             matcher-get-predicates
             register-reader))
 
@@ -28,6 +29,9 @@
 (define (matcher-get-accounts m)
   (hashq-ref m 'accounts))
 
+(define (matcher-get-action m)
+  (hashq-ref m 'action))
+
 (define (matcher-get-predicates m)
   (hashq-ref m 'predicates))
 
@@ -39,11 +43,9 @@
 ;; Iterate over all matchers, put the current matcher into a variable named in
 ;; the parenthesis of the expression (`current-matcher' in this case), and
 ;; execute the supplied code. That code may throw `matchers-done', in which
-;; case the construct exits the iteration and returns `#f'. If no exception is
-;; thrown (which means all matchers were processed) `#t' is returned.
-;;
-;; You can use `matcher-get-accounts' and `matcher-get-predicates' on
-;; `current-matcher' to extract the respective parts from the data structures.
+;; case the construct exits the iteration and returns the *first* argument you
+;; supplied along when throwing the exception. If no exception is thrown (which
+;; means all matchers were processed) `#f' is returned.
 (define-syntax for-all-matchers
   (syntax-rules ()
     ((_ (iter) code ...)
@@ -51,12 +53,13 @@
        (lambda ()
          (let next-matcher ((remaining-matchers matchers))
            (cond
-            ((null? remaining-matchers) #t)
+            ((null? remaining-matchers) #f)
             (else
              (let ((iter (car remaining-matchers)))
                code ...)
              (next-matcher (cdr remaining-matchers))))))
-       (lambda (key . args) #f)))))
+       (lambda (key . args)
+         (car args))))))
 
 (define (cnt-accounts)
   (length (get-accounts)))

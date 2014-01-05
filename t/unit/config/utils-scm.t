@@ -45,7 +45,7 @@
                    '()))
 
  (add-action #:name 'foobar
-             #:type 'rewrite
+             #:type 'side-effect
              #:code (code #t))
 
  (define-test "one action"
@@ -53,7 +53,7 @@
               1))
 
  (add-action #:name 'mumble
-             #:type 'rewrite
+             #:type 'side-effect
              #:code (code #f))
 
  (define-test "two actions"

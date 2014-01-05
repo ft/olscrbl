@@ -132,7 +132,8 @@
                 (account-parameter account 'max-submissions)))
          (track-stream (make-stream proc
                                     (filter (lambda (dat)
-                                              (not (run-matchers account dat)))
+                                              (eq? (run-matchers account dat)
+                                                   'submit))
                                             tracks))))
     (io " -!- [~a] session-id: ~a~%" account session-id)
     (io " -!- [~a] submit-uri-string: ~a~%" account submit-uri-string)
