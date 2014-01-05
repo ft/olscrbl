@@ -13,11 +13,11 @@ GUILE_AUTO_COMPILE=0
 export GUILE_AUTO_COMPILE
 
 # Or maybe amend its load-path?
-GUILE_LOAD_PATH="${HOME}/.olscrbl/scheme"
+GUILE_LOAD_PATH="${HOME}/src/olscrbl/scheme"
 export GUILE_LOAD_PATH
 
 # And for byte-compiled files?
-GUILE_LOAD_COMPILED_PATH="${HOME}/.olscrbl/scheme"
+GUILE_LOAD_COMPILED_PATH="${HOME}/src/olscrbl/scheme"
 export GUILE_LOAD_COMPILED_PATH
 
 # More detailed warnings for deprecated features used by olscrbl?
