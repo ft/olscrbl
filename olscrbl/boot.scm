@@ -60,43 +60,16 @@
                (quit 0)))
     ;; Load the user's init file.
     (let ((file (option-ref options 'config *init-file*)))
-      (catch
-        #t
-        (lambda ()
-          ;; Thunk: Try to load the user's init file.
-          (if (file-exists? file)
-              (begin
-                (if (not load-quiet)
-                    (format #t "Loading cfg: `~a'...\n" file))
-                (let ((cfg-mod (resolve-module '(olscrbl config))))
-                  (save-module-excursion
-                   (lambda ()
-                     (set-current-module cfg-mod)
-                     (primitive-load file)))))
-              (format #t "No configuration file found, at: `~a'\n"
-                      file)))
-        (lambda (key . args)
-          ;; Error-handler: Ask user if we should go on.
-          (let ((reason (symbol->string key)))
-            (format #t "\n  Caught exception (~a) while\n  reading `~a'.\n\n"
-                    (symbol->string key)
-                    file)
-            (format #t "~a\n\n" args)
-            (if (string= reason "quit")
-                (quit 1))
-            ;; TODO: Need to close&reopen stdin if it's not a terminal
-            (format #t "Hit <ENTER> to continue or <CTRL-C> to abort.\n\n")
-            (let nc ((c #\a))
-              (if (eq? c #\newline)
-                  #t
-                  (nc (read-char (current-input-port)))))))
-        (lambda (key . args)
-          ;; Pre-unwind-handler: Dump backtrace.
-          (let ((reason (symbol->string key)))
-            (if (string= reason "quit")
-                (quit 1))
-            (display-backtrace (make-stack #t)
-                               (current-output-port)))))))
+      (if (file-exists? file)
+          (begin (unless load-quiet
+                   (format #t "Loading cfg: `~a'...\n" file))
+                 (let ((cfg-mod (resolve-module '(olscrbl config))))
+                   (save-module-excursion
+                    (lambda ()
+                      (set-current-module cfg-mod)
+                      (primitive-load file)))))
+          (format #t "No configuration file found, at: `~a'\n"
+                  file))))
   (set-opt-if-option-set 'log-file-type options 'filetype string->symbol)
   ;; Initialisation done. Load the actual program.
   (olscrbl-main))
