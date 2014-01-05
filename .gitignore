@@ -9,7 +9,7 @@ tags
 TAGS
 bin/
 bin/*
-olscrbl/build-configuration.scm
+scheme/olscrbl/build-configuration.scm
 t/twd
 t/twd/*
 t/logs
