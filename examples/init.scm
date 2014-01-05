@@ -54,7 +54,7 @@
 ;; The above example was pretty simple. Let's do something a little more
 ;; involved. First of all, let's load another module, that let's us examine the
 ;; date structures, for the entry data that ‘olscrble’ hands around:
-(use-modules (olscrbl scrobbler-log))
+(use-modules (olscrbl data-access))
 
 ;; The next example doesn't make much sense with the (match-entry) call in
 ;; place, because that would match everything that's left and so the code below
